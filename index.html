@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090d18">
+<title>LiquidOS</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090d18;
+  --glass: rgba(255,255,255,.075);
+  --line: rgba(255,255,255,.13);
+  --text: #f5f7ff;
+  --muted: #a4aec7;
+  --blue: #82b7ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font: 15px system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 10% 5%, #203f70 0, transparent 40%),
+    radial-gradient(ellipse at 90% 80%, #382252 0, transparent 38%),
+    var(--bg);
+}
+button, input { font: inherit; }
+button { color: inherit; cursor: pointer; }
+.shell {
+  max-width: 1050px;
+  margin: auto;
+  padding: 24px;
+}
+.top, .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 18px;
+}
+.brand { font-size: 22px; font-weight: 750; letter-spacing: -.8px; }
+.brand span { color: var(--blue); }
+.muted { color: var(--muted); }
+h1 { font-size: clamp(30px, 6vw, 48px); margin: 24px 0 4px; }
+h2 { font-size: 18px; margin: 0 0 14px; }
+.clock { font-size: 14px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+.app {
+  border: 1px solid var(--line);
+  background: var(--glass);
+  border-radius: 20px;
+  padding: 18px 8px;
+  text-align: center;
+  min-width: 0;
+}
+.app:active, button:active { transform: scale(.98); }
+.symbol { font-size: 27px; display: block; margin-bottom: 8px; }
+.app small { color: var(--muted); }
+.panel { margin-top: 14px; }
+.action {
+  border: 1px solid var(--line);
+  background: rgba(130,183,255,.13);
+  border-radius: 13px;
+  padding: 10px 14px;
+}
+#answer { line-height: 1.6; white-space: pre-wrap; }
+input {
+  min-width: 0;
+  flex: 1;
+  color: white;
+  background: rgba(0,0,0,.2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+footer { text-align: center; margin: 28px 0 8px; }
+@media(max-width:600px) {
+  .shell { padding: 15px; }
+  .grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .glass { padding: 15px; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand">Liquid<span>OS</span></div>
+    <div class="clock muted" id="clock">Démarrage...</div>
+  </header>
+
+  <section>
+    <p class="muted">TON ESPACE PERSONNEL</p>
+    <h1>Bonjour.</h1>
+    <p class="muted">Un système plus simple. Un nouveau départ.</p>
+  </section>
+
+  <section class="glass">
+    <div class="row">
+      <div>
+        <div class="muted">SYSTÈME</div>
+        <h2 style="margin-top:6px">LiquidOS Preview</h2>
+      </div>
+      <span>● Prototype</span>
+    </div>
+    <p class="muted">Interface de démonstration — Android reste le système sous-jacent.</p>
+  </section>
+
+  <section>
+    <h2 style="margin-top:26px">Applications</h2>
+    <div class="grid">
+      <button class="app" onclick="openApp('Assistant')">
+        <span class="symbol">✧</span>Assistant<br><small>Intelligence</small>
+      </button>
+      <button class="app" onclick="openApp('Internet')">
+        <span class="symbol">◎</span>Internet<br><small>Navigation</small>
+      </button>
+      <button class="app" onclick="openApp('Médias')">
+        <span class="symbol">▷</span>Médias<br><small>Vidéos</small>
+      </button>
+      <button class="app" onclick="openApp('Paramètres')">
+        <span class="symbol">⚙</span>Paramètres<br><small>Système</small>
+      </button>
+    </div>
+  </section>
+
+  <section class="glass panel" id="workspace">
+    <h2 id="panelTitle">Bienvenue dans LiquidOS</h2>
+    <p class="muted" id="panelText">
+      Choisis une application pour découvrir le prototype.
+    </p>
+    <div id="panelControls"></div>
+  </section>
+
+  <footer class="muted">
+    LiquidOS · Projet expérimental · Version 0.1
+  </footer>
+</main>
+
+<script>
+const title = document.getElementById("panelTitle");
+const text = document.getElementById("panelText");
+const controls = document.getElementById("panelControls");
+
+function updateClock() {
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString("fr-FR", {
+      hour: "2-digit", minute: "2-digit"
+    });
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+function openApp(name) {
+  title.textContent = name;
+  controls.replaceChildren();
+
+  if (name === "Assistant") {
+    text.textContent =
+      "Salut ! Je suis l'assistant de démonstration LiquidOS. " +
+      "Je fonctionne localement avec quelques commandes prédéfinies.";
+
+    const form = document.createElement("form");
+    form.className = "row";
+
+    const input = document.createElement("input");
+    input.placeholder = "Essaie : aide, heure ou système";
+    input.setAttribute("aria-label", "Message à l'assistant");
+
+    const button = document.createElement("button");
+    button.className = "action";
+    button.textContent = "Envoyer";
+
+    form.append(input, button);
+    form.onsubmit = event => {
+      event.preventDefault();
+      const question = input.value.trim().toLowerCase();
+      if (!question) return;
+
+      if (question.includes("heure")) {
+        text.textContent = "Il est " +
+          new Date().toLocaleTimeString("fr-FR") + ".";
+      } else if (question.includes("système")) {
+        text.textContent =
+          "LiquidOS est actuellement un prototype web, pas un système " +
+          "d'exploitation indépendant.";
+      } else {
+        text.textContent =
+          "Je suis encore en version expérimentale. " +
+          "Essaie « heure » ou « système ». Une véritable IA pourra " +
+          "être ajoutée plus tard.";
+      }
+      input.value = "";
+    };
+    controls.append(form);
+    input.focus();
+    return;
+  }
+
+  if (name === "Paramètres") {
+    text.textContent =
+      "Personnalisation de l'interface LiquidOS.";
+
+    const button = document.createElement("button");
+    button.className = "action";
+    button.textContent = "Changer l'apparence";
+    button.onclick = () => {
+      document.body.classList.toggle("light");
+      const light = document.body.classList.contains("light");
+      document.body.style.background = light
+        ? "#dce8f8" : "";
+      document.body.style.color = light ? "#111827" : "";
+      text.textContent = light
+        ? "Mode clair activé pour cette session."
+        : "Mode sombre activé.";
+    };
+    controls.append(button);
+    return;
+  }
+
+  if (name === "Internet") {
+    text.textContent =
+      "Le navigateur complet sera celui installé sur l'appareil. " +
+      "Cette maquette ne remplace pas une application de navigation.";
+    return;
+  }
+
+  text.textContent =
+    "Espace médias prêt à être développé. " +
+    "Nous ajouterons des raccourcis vers des services compatibles, " +
+    "sans contourner leurs règles d'accès.";
+}
+</script>
+</body>
+</html>
