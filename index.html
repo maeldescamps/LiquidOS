@@ -4,472 +4,777 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#10131d">
-<meta name="description" content="LiquidOS — une interface moderne et personnelle.">
-<title>LiquidOS</title>
+<meta name="theme-color" content="#080d1c">
+<meta name="description" content="LiquidOS — interface expérimentale Liquid Glass">
+<title>LiquidOS 0.3</title>
 
 <style>
 :root {
-  --accent: #9bbdff;
-  --accent2: #c5b4ff;
-  --bg: #10131d;
-  --glass: rgba(255,255,255,.075);
-  --border: rgba(255,255,255,.13);
-  --text: #f4f6ff;
-  --muted: #a4abc0;
+  --accent: #79aaff;
+  --accent2: #a98bff;
+  --brightness: 1;
+  --text: #f5f7ff;
+  --muted: #aebbd4;
+  --glass: rgba(255,255,255,.085);
+  --border: rgba(255,255,255,.15);
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(ellipse at 10% 10%, #283e68 0%, transparent 43%),
-    radial-gradient(ellipse at 95% 70%, #45325f 0%, transparent 40%),
-    var(--bg);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  padding: max(18px, env(safe-area-inset-top)) 20px 25px;
+  background: #080d1c;
+  overflow-x: hidden;
 }
 button, input, textarea, select { font: inherit; }
 button { color: inherit; cursor: pointer; }
-button:focus-visible, input:focus-visible {
+button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+.wallpaper {
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse at 18% 20%, #244a83 0, transparent 38%),
+    radial-gradient(ellipse at 80% 35%, #513780 0, transparent 36%),
+    radial-gradient(ellipse at 50% 90%, #102e4d 0, transparent 42%),
+    #080d1c;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.wallpaper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 15%, #050814 100%);
+}
+@keyframes drift {
+  from { transform: translate(-1%, -1%) scale(1); }
+  to { transform: translate(2%, 1%) scale(1.08); }
+}
+button, .glass {
+  -webkit-tap-highlight-color: transparent;
 }
 .glass {
   background: var(--glass);
   border: 1px solid var(--border);
-  border-radius: 23px;
-  box-shadow: 0 12px 35px rgba(0,0,0,.12);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.16);
+  border-radius: 24px;
 }
-header {
+.topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+}
+.brand { font-weight: 750; letter-spacing: .5px; }
+.brand span { color: var(--accent); }
+.top-actions { display: flex; gap: 8px; }
+.small-btn {
+  border: 1px solid var(--border);
+  background: var(--glass);
+  border-radius: 15px;
+  padding: 10px 13px;
+}
+.small-btn:hover, .app-icon:hover, .action:hover {
+  background: rgba(255,255,255,.16);
+}
+.status { color: var(--muted); font-size: 12px; }
+main {
+  width: min(100% - 28px, 920px);
+  margin: 10px auto 100px;
+}
+.welcome { margin: 22px 4px 24px; }
+.eyebrow {
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+h1 { font-size: clamp(32px, 6vw, 52px); margin: 9px 0; letter-spacing: -2px; }
+.subtitle { color: var(--muted); line-height: 1.6; }
+.search {
+  display: flex;
+  gap: 9px;
+  padding: 9px;
+  margin: 20px 0 24px;
+}
+.search input, .field {
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  color: var(--text);
+  background: rgba(0,0,0,.15);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 13px;
+}
+.search input::placeholder, textarea::placeholder, .field::placeholder {
+  color: #aab7d0;
+}
+.primary {
+  border: 0;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #071020;
+  font-weight: 750;
+  padding: 12px 17px;
+}
+.section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 25px 3px 13px;
+}
+.section-head h2 { font-size: 17px; margin: 0; }
+.section-head span { color: var(--muted); font-size: 12px; }
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
-.brand { font-size: 20px; font-weight: 750; letter-spacing: .3px; }
-.brand span { color: var(--accent); }
-.status { font-size: 11px; color: var(--muted); }
-.hero { padding: 38px 0 24px; }
-.clock {
-  font-size: clamp(54px, 13vw, 82px);
-  font-weight: 300;
-  letter-spacing: -3px;
-  line-height: 1.05;
-}
-.date { color: var(--muted); margin-top: 9px; text-transform: capitalize; }
-.search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px 15px;
-}
-.search input {
-  min-width: 0;
-  flex: 1;
-  background: transparent;
-  color: var(--text);
-  border: 0;
-  outline: 0;
-}
-.search button, .icon-button {
-  background: rgba(255,255,255,.1);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 11px;
-}
-.section-title {
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  margin: 26px 0 12px;
-}
-.apps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 11px;
-}
-.app {
-  min-width: 0;
-  min-height: 100px;
-  padding: 13px 4px;
+.app-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 10px;
+  padding: 17px 4px;
+  min-width: 0;
+  border-radius: 23px;
   border: 1px solid var(--border);
-  border-radius: 20px;
   background: var(--glass);
-  transition: transform .15s, background .15s;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: transform .2s, background .2s;
 }
-.app:active { transform: scale(.96); }
-.app-icon {
-  width: 43px;
-  height: 43px;
+.app-icon:active { transform: scale(.96); }
+.app-icon .emoji { font-size: 27px; }
+.app-icon .name { font-size: 12px; }
+.widget-row {
   display: grid;
-  place-items: center;
-  border-radius: 15px;
-  background: linear-gradient(140deg, rgba(155,189,255,.23), rgba(197,180,255,.13));
+  grid-template-columns: 1.1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+.widget { padding: 19px; }
+.widget h3 { margin: 0 0 8px; font-size: 15px; }
+.widget p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.big-time { font-size: clamp(27px, 6vw, 39px); letter-spacing: -1px; }
+.dock {
+  position: fixed;
+  z-index: 3;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 9px;
+  border-radius: 23px;
+  background: rgba(13,19,38,.78);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+.dock button {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--glass);
   font-size: 22px;
 }
-.app-label { font-size: 11px; text-align: center; overflow-wrap: anywhere; }
-.widget { margin-top: 20px; padding: 18px; }
-.widget h2 { font-size: 16px; margin: 0 0 8px; }
-.widget p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
-.dock { display: flex; justify-content: center; gap: 13px; margin: 24px 0 5px; }
-.dock button {
-  width: 52px; height: 52px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: rgba(255,255,255,.11);
-  font-size: 21px;
+.footer {
+  text-align: center;
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 11px;
 }
-footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 22px; }
 
-.overlay {
-  display: none;
+/* Écran de verrouillage */
+.lock-screen {
   position: fixed;
+  z-index: 20;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(40px, env(safe-area-inset-top)) 24px
+           max(30px, env(safe-area-inset-bottom));
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 20% 25%, rgba(45,105,190,.65), transparent 42%),
+    radial-gradient(ellipse at 80% 65%, rgba(116,64,170,.58), transparent 40%),
+    #070b18;
+  transition: opacity .35s, visibility .35s;
+}
+.lock-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lock-brand { font-size: 18px; font-weight: 750; letter-spacing: 1px; }
+.lock-center { margin: auto 0; }
+.lock-time { font-size: clamp(65px, 17vw, 112px); font-weight: 250; letter-spacing: -5px; }
+.lock-date { color: #d3def4; font-size: 16px; margin-top: 4px; }
+.lock-message { color: #c3cfe6; font-size: 13px; margin-top: 35px; }
+.unlock {
+  padding: 15px 27px;
+  border-radius: 19px;
+  border: 1px solid rgba(255,255,255,.3);
+  background: rgba(255,255,255,.14);
+  backdrop-filter: blur(20px);
+  min-width: 190px;
+}
+.unlock span { margin-left: 10px; }
+.lock-bottom { color: #aebbd4; font-size: 11px; }
+
+/* Centre de contrôle */
+.scrim {
+  position: fixed;
+  z-index: 9;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: .25s;
+}
+.scrim.visible { opacity: 1; visibility: visible; }
+.control-panel {
+  position: fixed;
   z-index: 10;
+  top: 0;
+  right: 0;
+  height: 100%;
+  height: 100dvh;
+  width: min(390px, 94vw);
+  padding: max(25px, env(safe-area-inset-top)) 20px
+           max(25px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  background: rgba(12,18,38,.93);
+  border-left: 1px solid var(--border);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  transform: translateX(105%);
+  transition: transform .3s ease;
+}
+.control-panel.visible { transform: translateX(0); }
+.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.panel-head h2 { margin: 0; }
+.close-btn {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--glass);
+  padding: 9px 12px;
+}
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quick-toggle {
+  min-height: 82px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  border-radius: 19px;
+  padding: 13px;
+  text-align: left;
+}
+.quick-toggle .qicon { font-size: 23px; display: block; margin-bottom: 7px; }
+.quick-toggle small { display: block; color: var(--muted); margin-top: 4px; }
+.quick-toggle.on { background: linear-gradient(135deg, rgba(91,151,255,.48), rgba(155,110,255,.28)); }
+.control-section { margin-top: 23px; padding: 17px; }
+.control-section label { display: block; font-size: 13px; margin-bottom: 10px; }
+.control-section input[type="range"] { width: 100%; accent-color: var(--accent); }
+.control-section select { width: 100%; }
+.control-note { color: var(--muted); font-size: 11px; line-height: 1.5; margin-top: 18px; }
+
+/* Fenêtres d'applications */
+.modal-backdrop {
+  position: fixed;
+  z-index: 15;
+  inset: 0;
   padding: 16px;
-  background: rgba(5,7,14,.7);
+  display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(2,5,15,.7);
+  backdrop-filter: blur(10px);
 }
-.overlay.open { display: flex; }
-.panel {
-  width: min(100%, 470px);
-  max-height: 88vh;
+.modal-backdrop.hidden { display: none; }
+.modal {
+  width: min(100%, 500px);
+  max-height: 85vh;
   overflow-y: auto;
-  padding: 21px;
-}
-.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.panel h2 { font-size: 19px; margin: 0 0 16px; }
-.close {
-  flex-shrink: 0;
-  background: var(--glass);
+  padding: 22px;
+  background: rgba(17,25,48,.97);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 10px;
+  border-radius: 26px;
+  box-shadow: 0 25px 90px rgba(0,0,0,.4);
 }
-.panel p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.field { margin: 15px 0; }
-.field label { display: block; font-size: 13px; margin-bottom: 8px; }
-.field input, .field textarea, .field select {
+.modal-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.modal-title h2 { font-size: 20px; margin: 0; }
+.modal-content { color: var(--muted); line-height: 1.6; }
+.modal-content .field { display: block; margin: 10px 0; }
+.modal-content textarea { min-height: 140px; resize: vertical; }
+.action {
+  border: 1px solid var(--border);
+  background: var(--glass);
+  border-radius: 13px;
+  padding: 10px 13px;
+  margin: 4px 4px 4px 0;
+}
+.action.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.calc-display {
   width: 100%;
-  color: var(--text);
-  background: rgba(0,0,0,.2);
+  padding: 18px;
+  border-radius: 15px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(0,0,0,.25);
+  color: white;
+  font-size: 25px;
+  text-align: right;
+  margin-bottom: 10px;
 }
-.field select option { background: var(--bg); }
-.primary {
-  border: 0;
-  border-radius: 13px;
-  padding: 12px 15px;
-  background: var(--accent);
-  color: #111522;
-  font-weight: 700;
+.calc-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+.calc-grid button { padding: 15px 2px; border-radius: 13px; border: 1px solid var(--border); background: var(--glass); }
+.note-status { font-size: 12px; color: var(--accent); }
+body.dimmed { filter: brightness(var(--brightness)); }
+
+@media (max-width: 430px) {
+  .topbar { padding: 14px; }
+  main { width: calc(100% - 22px); margin-top: 4px; }
+  .app-grid { gap: 8px; }
+  .app-icon { padding: 14px 2px; border-radius: 18px; }
+  .app-icon .emoji { font-size: 24px; }
+  .widget-row { grid-template-columns: 1fr; }
+  .dock button { width: 43px; height: 43px; }
 }
-.secondary {
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  padding: 11px 13px;
-  background: var(--glass);
-}
-.actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
-.result { white-space: pre-wrap; font-size: 14px; line-height: 1.6; margin-top: 12px; }
-.note-status { color: var(--muted); font-size: 12px; }
-@media(max-width: 350px) {
-  body { padding-left: 13px; padding-right: 13px; }
-  .apps { grid-template-columns: repeat(3, minmax(0,1fr)); }
-  .status { font-size: 10px; }
-}
-@media(min-width: 700px) {
-  body { max-width: 900px; margin: auto; padding: 30px; }
-  .apps { gap: 15px; }
-  .app { min-height: 115px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 
 <body>
-<header>
-  <div class="brand">◈ Liquid<span>OS</span></div>
-  <div class="status">● Interface active · v0.2</div>
+<div class="wallpaper"></div>
+
+<!-- Écran de verrouillage -->
+<section class="lock-screen" id="lockScreen" aria-label="Écran de verrouillage">
+  <div class="lock-brand">◈ LIQUID<span style="color:var(--accent)">OS</span></div>
+  <div class="lock-center">
+    <div class="lock-time" id="lockTime">--:--</div>
+    <div class="lock-date" id="lockDate">Chargement…</div>
+    <div class="lock-message">Votre espace numérique, autrement.</div>
+  </div>
+  <button class="unlock" id="unlockButton">Déverrouiller <span>↗</span></button>
+  <div class="lock-bottom">LIQUIDOS 0.3 · EXPÉRIMENTAL</div>
+</section>
+
+<header class="topbar">
+  <div>
+    <div class="brand">◈ Liquid<span>OS</span></div>
+    <div class="status">Version 0.3 · Interface expérimentale</div>
+  </div>
+  <div class="top-actions">
+    <button class="small-btn" id="lockButton" title="Verrouiller">⌑</button>
+    <button class="small-btn" id="controlButton" title="Centre de contrôle">☷</button>
+  </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="clock" id="clock">--:--</div>
-    <div class="date" id="date">Bienvenue</div>
+  <section class="welcome">
+    <div class="eyebrow">Votre espace personnel</div>
+    <h1>Bonjour.</h1>
+    <div class="subtitle" id="greetingDate">Bienvenue dans LiquidOS.</div>
   </section>
 
-  <form class="glass search" id="searchForm">
-    <span aria-hidden="true">⌕</span>
-    <input id="searchInput" aria-label="Recherche Internet" placeholder="Rechercher sur Internet…">
-    <button type="submit" aria-label="Lancer la recherche">↗</button>
+  <form class="search glass" id="searchForm">
+    <input id="searchInput" type="search" placeholder="Rechercher sur Internet…" aria-label="Recherche Internet">
+    <button class="primary" type="submit">Chercher</button>
   </form>
 
-  <div class="section-title">APPLICATIONS</div>
-  <section class="apps" aria-label="Applications">
-    <button class="app" data-app="assistant"><span class="app-icon">✦</span><span class="app-label">Assistant</span></button>
-    <button class="app" data-app="internet"><span class="app-icon">◎</span><span class="app-label">Internet</span></button>
-    <button class="app" data-app="calculator"><span class="app-icon">＋</span><span class="app-label">Calculatrice</span></button>
-    <button class="app" data-app="settings"><span class="app-icon">⚙</span><span class="app-label">Réglages</span></button>
-    <button class="app" data-app="notes"><span class="app-icon">▤</span><span class="app-label">Notes</span></button>
-    <button class="app" data-app="media"><span class="app-icon">♫</span><span class="app-label">Médias</span></button>
-    <button class="app" data-app="calendar"><span class="app-icon">▦</span><span class="app-label">Calendrier</span></button>
-    <button class="app" data-app="about"><span class="app-icon">◉</span><span class="app-label">À propos</span></button>
+  <div class="section-head">
+    <h2>Applications</h2>
+    <span>8 applications</span>
+  </div>
+
+  <section class="app-grid">
+    <button class="app-icon" data-app="assistant"><span class="emoji">✧</span><span class="name">Assistant</span></button>
+    <button class="app-icon" data-app="internet"><span class="emoji">◎</span><span class="name">Internet</span></button>
+    <button class="app-icon" data-app="calculator"><span class="emoji">÷</span><span class="name">Calculatrice</span></button>
+    <button class="app-icon" data-app="settings"><span class="emoji">⚙</span><span class="name">Réglages</span></button>
+    <button class="app-icon" data-app="notes"><span class="emoji">▤</span><span class="name">Notes</span></button>
+    <button class="app-icon" data-app="media"><span class="emoji">♫</span><span class="name">Média</span></button>
+    <button class="app-icon" data-app="calendar"><span class="emoji">▦</span><span class="name">Calendrier</span></button>
+    <button class="app-icon" data-app="about"><span class="emoji">◈</span><span class="name">À propos</span></button>
   </section>
 
-  <section class="glass widget">
-    <h2>Un espace à ton image.</h2>
-    <p>Bienvenue dans LiquidOS. Personnalise ton interface, prends des notes et accède rapidement à tes outils.</p>
+  <section class="widget-row">
+    <div class="widget glass">
+      <h3>Heure locale</h3>
+      <div class="big-time" id="homeTime">--:--</div>
+      <p id="homeDate">Chargement de la date…</p>
+    </div>
+    <div class="widget glass">
+      <h3>LiquidOS 0.3</h3>
+      <p>Une interface personnelle inspirée du verre liquide. Pensée pour évoluer avec votre tablette.</p>
+    </div>
   </section>
 
-  <nav class="dock" aria-label="Raccourcis">
-    <button data-app="internet" aria-label="Internet">◎</button>
-    <button data-app="assistant" aria-label="Assistant">✦</button>
-    <button data-app="settings" aria-label="Réglages">⚙</button>
-  </nav>
+  <div class="footer">LiquidOS n’est pas Android et ne remplace pas le système installé.</div>
 </main>
 
-<footer>LiquidOS 0.2 · Prototype web expérimental</footer>
+<nav class="dock" aria-label="Raccourcis">
+  <button data-app="internet" title="Internet">◎</button>
+  <button data-app="notes" title="Notes">▤</button>
+  <button data-app="calculator" title="Calculatrice">÷</button>
+  <button id="dockControl" title="Centre de contrôle">☷</button>
+</nav>
 
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
-  <section class="glass panel">
-    <div class="panel-head">
-      <h2 id="panelTitle">LiquidOS</h2>
-      <button class="close" id="closePanel">Fermer ✕</button>
+<div class="scrim" id="scrim"></div>
+
+<aside class="control-panel" id="controlPanel" aria-label="Centre de contrôle">
+  <div class="panel-head">
+    <h2>Centre de contrôle</h2>
+    <button class="close-btn" id="closeControl">✕</button>
+  </div>
+  <p class="status" id="controlDate">Chargement…</p>
+
+  <div class="quick-grid">
+    <button class="quick-toggle on" data-toggle="wifi">
+      <span class="qicon">⌁</span>Wi-Fi<small>Raccourci visuel</small>
+    </button>
+    <button class="quick-toggle" data-toggle="bluetooth">
+      <span class="qicon">ᛒ</span>Bluetooth<small>Raccourci visuel</small>
+    </button>
+    <button class="quick-toggle" data-toggle="airplane">
+      <span class="qicon">✈</span>Mode avion<small>Raccourci visuel</small>
+    </button>
+    <button class="quick-toggle on" data-toggle="focus">
+      <span class="qicon">☾</span>Concentration<small>Raccourci visuel</small>
+    </button>
+  </div>
+
+  <div class="control-section glass">
+    <label for="brightness">Luminosité de l’interface</label>
+    <input type="range" id="brightness" min="50" max="100" value="100">
+    <p class="status">Ce réglage modifie l’apparence de LiquidOS, pas le rétroéclairage réel de l’écran.</p>
+  </div>
+
+  <div class="control-section glass">
+    <label for="accentSelect">Couleur d’accentuation</label>
+    <select class="field" id="accentSelect">
+      <option value="blue">Bleu glacier</option>
+      <option value="mint">Vert menthe</option>
+      <option value="purple">Violet</option>
+      <option value="amber">Ambre</option>
+    </select>
+  </div>
+
+  <p class="control-note">Les boutons Wi-Fi, Bluetooth et mode avion sont des simulations. Une page web ne peut pas activer ou désactiver directement les radios système Android.</p>
+</aside>
+
+<div class="modal-backdrop hidden" id="modalBackdrop">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-title">
+      <h2 id="modalTitle">Application</h2>
+      <button class="close-btn" id="closeModal">✕</button>
     </div>
-    <div id="panelBody"></div>
+    <div class="modal-content" id="modalContent"></div>
   </section>
 </div>
 
 <script>
 "use strict";
 
-const $ = id => document.getElementById(id);
-const overlay = $("overlay");
-const panelTitle = $("panelTitle");
-const panelBody = $("panelBody");
-const STORAGE_KEY = "liquidos-notes-v1";
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
 
 function updateClock() {
   const now = new Date();
-  $("clock").textContent = now.toLocaleTimeString("fr-FR", {
-    hour: "2-digit", minute: "2-digit"
+  const time = now.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+  const date = now.toLocaleDateString("fr-FR", {
+    weekday:"long", day:"numeric", month:"long", year:"numeric"
   });
-  $("date").textContent = now.toLocaleDateString("fr-FR", {
-    weekday: "long", day: "numeric", month: "long"
-  });
+  $("#lockTime").textContent = time;
+  $("#homeTime").textContent = time;
+  $("#lockDate").textContent = date;
+  $("#homeDate").textContent = date;
+  $("#controlDate").textContent = date;
+  $("#greetingDate").textContent = date.charAt(0).toUpperCase() + date.slice(1);
 }
 updateClock();
-setInterval(updateClock, 15000);
+setInterval(updateClock, 1000);
 
-function showPanel(name) {
-  const pages = {
-    assistant: {
-      title: "Assistant Liquid",
-      html: `<p>Je suis l'assistant de démonstration de LiquidOS. Je ne suis pas encore connecté à un service d'intelligence artificielle.</p>
-      <div class="field"><label for="assistantQuestion">Ton message</label><input id="assistantQuestion" placeholder="Écris un message…"></div>
-      <button class="primary" id="assistantSend">Envoyer</button><div class="result" id="assistantResult"></div>`
-    },
-    settings: {
-      title: "Réglages LiquidOS",
-      html: `<div class="field"><label for="accentChoice">Couleur principale</label>
-      <select id="accentChoice">
-        <option value="#9bbdff">Bleu glacier</option>
-        <option value="#a9e8d5">Vert menthe</option>
-        <option value="#d4b4ff">Violet</option>
-        <option value="#ffc7a5">Ambre</option>
-      </select></div>
-      <div class="field"><label for="wallChoice">Arrière-plan</label>
-      <select id="wallChoice">
-        <option value="blue">Bleu et violet</option>
-        <option value="green">Vert et bleu</option>
-        <option value="dark">Noir profond</option>
-      </select></div>
-      <p>Ces réglages modifient uniquement l'interface LiquidOS, pas les paramètres Android.</p>`
-    },
-    internet: {
-      title: "Internet",
-      html: `<p>Recherche sur le Web avec ton navigateur.</p>
-      <button class="primary" id="openGoogle">Ouvrir Google</button>
-      <div class="field"><label for="quickUrl">Adresse d'un site</label><input id="quickUrl" placeholder="https://example.com"></div>
-      <button class="secondary" id="openUrl">Ouvrir cette adresse</button>`
-    },
-    calculator: {
-      title: "Calculatrice",
-      html: `<p>Entre une opération simple. Utilise les nombres et les signes + − * / ( ).</p>
-      <div class="field"><label for="calcInput">Opération</label><input id="calcInput" inputmode="decimal" placeholder="12 * (3 + 2)"></div>
-      <button class="primary" id="calcRun">Calculer</button><div class="result" id="calcResult"></div>`
-    },
-    notes: {
-      title: "Notes",
-      html: `<p>Tes notes sont enregistrées dans le stockage local de ce navigateur.</p>
-      <div class="field"><label for="noteText">Ma note</label><textarea id="noteText" rows="7" placeholder="Écris ici…"></textarea></div>
-      <div class="actions"><button class="primary" id="saveNote">Enregistrer</button><button class="secondary" id="downloadNote">Exporter .txt</button></div>
-      <p class="note-status" id="noteStatus"></p>`
-    },
-    media: {
-      title: "Médias",
-      html: `<p>Cette section est prête à recevoir des raccourcis vers tes services multimédias.</p>
-      <div class="actions"><button class="secondary" id="mediaYoutube">YouTube</button><button class="secondary" id="mediaRadio">Radio en ligne</button></div>`
-    },
-    calendar: {
-      title: "Calendrier",
-      html: `<p id="calendarDate"></p><p>Pour le moment, ce panneau affiche la date du jour. Le calendrier complet sera ajouté plus tard.</p>`
-    },
-    about: {
-      title: "À propos",
-      html: `<p><strong>LiquidOS 0.2</strong></p><p>Interface expérimentale conçue pour la Logicom Tab 114 et les écrans tactiles.</p><p>Cette version est une application web : elle ne remplace pas Android et n'accède pas directement aux fonctions système.</p>`
-    }
+const lockScreen = $("#lockScreen");
+$("#unlockButton").addEventListener("click", () => {
+  lockScreen.classList.add("hidden");
+});
+$("#lockButton").addEventListener("click", () => {
+  lockScreen.classList.remove("hidden");
+});
+
+const controlPanel = $("#controlPanel");
+const scrim = $("#scrim");
+function openControl() {
+  controlPanel.classList.add("visible");
+  scrim.classList.add("visible");
+}
+function closeControl() {
+  controlPanel.classList.remove("visible");
+  scrim.classList.remove("visible");
+}
+$("#controlButton").addEventListener("click", openControl);
+$("#dockControl").addEventListener("click", openControl);
+$("#closeControl").addEventListener("click", closeControl);
+scrim.addEventListener("click", closeControl);
+
+$$("[data-toggle]").forEach(button => {
+  button.addEventListener("click", () => {
+    button.classList.toggle("on");
+    button.setAttribute("aria-pressed", button.classList.contains("on") ? "true" : "false");
+  });
+});
+
+const accents = {
+  blue: ["#79aaff", "#a98bff"],
+  mint: ["#68e0c0", "#79aaff"],
+  purple: ["#b49aff", "#f09bd5"],
+  amber: ["#ffd078", "#ff9fbd"]
+};
+function setAccent(value) {
+  const pair = accents[value] || accents.blue;
+  document.documentElement.style.setProperty("--accent", pair[0]);
+  document.documentElement.style.setProperty("--accent2", pair[1]);
+  localStorage.setItem("liquidos-accent", value);
+  $("#accentSelect").value = value;
+}
+const savedAccent = localStorage.getItem("liquidos-accent") || "blue";
+setAccent(savedAccent);
+$("#accentSelect").addEventListener("change", event => setAccent(event.target.value));
+
+$("#brightness").addEventListener("input", event => {
+  const amount = Number(event.target.value) / 100;
+  document.documentElement.style.setProperty("--brightness", amount);
+  document.body.classList.add("dimmed");
+  localStorage.setItem("liquidos-brightness", event.target.value);
+});
+const savedBrightness = localStorage.getItem("liquidos-brightness");
+if (savedBrightness) {
+  $("#brightness").value = savedBrightness;
+  document.documentElement.style.setProperty("--brightness", Number(savedBrightness)/100);
+  document.body.classList.add("dimmed");
+}
+
+const backdrop = $("#modalBackdrop");
+const modalTitle = $("#modalTitle");
+const modalContent = $("#modalContent");
+let calcExpression = "";
+
+function openApp(app) {
+  closeControl();
+  const titles = {
+    assistant:"Assistant", internet:"Internet", calculator:"Calculatrice",
+    settings:"Réglages", notes:"Notes", media:"Média",
+    calendar:"Calendrier", about:"À propos"
   };
+  modalTitle.textContent = titles[app] || "Application";
+  backdrop.classList.remove("hidden");
 
-  const page = pages[name] || pages.about;
-  panelTitle.textContent = page.title;
-  panelBody.innerHTML = page.html;
-  overlay.classList.add("open");
-
-  if (name === "assistant") {
-    $("assistantSend").onclick = () => {
-      const question = $("assistantQuestion").value.trim();
-      $("assistantResult").textContent = question
-        ? "Je n'ai pas encore de moteur IA connecté. Cette fonction sera développée dans une prochaine version."
-        : "Écris d'abord un message.";
-    };
-    $("assistantQuestion").addEventListener("keydown", e => {
-      if (e.key === "Enter") $("assistantSend").click();
-    });
-  }
-
-  if (name === "settings") {
-    const accent = localStorage.getItem("liquidos-accent") || "#9bbdff";
-    const wall = localStorage.getItem("liquidos-wall") || "blue";
-    $("accentChoice").value = accent;
-    $("wallChoice").value = wall;
-    applyAccent(accent);
-    applyWallpaper(wall);
-    $("accentChoice").onchange = e => {
-      applyAccent(e.target.value);
-      localStorage.setItem("liquidos-accent", e.target.value);
-    };
-    $("wallChoice").onchange = e => {
-      applyWallpaper(e.target.value);
-      localStorage.setItem("liquidos-wall", e.target.value);
+  if (app === "assistant") {
+    modalContent.innerHTML = `
+      <p>Bienvenue dans l’assistant LiquidOS.</p>
+      <p>Pour le moment, cet assistant est une démonstration locale et n’est pas connecté à une intelligence artificielle.</p>
+      <button class="action primary" id="assistantHint">Afficher une idée de projet</button>
+      <p id="assistantAnswer"></p>`;
+    $("#assistantHint").onclick = () => {
+      $("#assistantAnswer").textContent =
+        "Prochaine idée : ajouter une page de notifications et personnaliser les icônes.";
     };
   }
 
-  if (name === "internet") {
-    $("openGoogle").onclick = () => window.open("https://www.google.com/", "_blank", "noopener");
-    $("openUrl").onclick = () => {
-      let value = $("quickUrl").value.trim();
+  if (app === "internet") {
+    modalContent.innerHTML = `
+      <p>Rechercher sur Internet ou ouvrir une adresse web.</p>
+      <form id="internetForm">
+        <input class="field" id="webAddress" placeholder="Recherche ou adresse web" required>
+        <button class="action primary" type="submit">Ouvrir</button>
+      </form>
+      <p>La page demandée s’ouvrira dans un nouvel onglet.</p>`;
+    $("#internetForm").onsubmit = event => {
+      event.preventDefault();
+      const value = $("#webAddress").value.trim();
       if (!value) return;
-      if (!/^https?:\/\//i.test(value)) value = "https://" + value;
+      let url;
       try {
-        const url = new URL(value);
-        if (url.protocol === "http:" || url.protocol === "https:") {
-          window.open(url.href, "_blank", "noopener");
-        }
+        url = /^https?:\/\//i.test(value)
+          ? new URL(value)
+          : new URL("https://www.google.com/search?q=" + encodeURIComponent(value));
       } catch {
-        alert("Adresse invalide.");
-      }
-    };
-  }
-
-  if (name === "calculator") {
-    $("calcRun").onclick = () => {
-      const expression = $("calcInput").value.trim();
-      if (!expression || !/^[0-9+\-*/().\s]+$/.test(expression)) {
-        $("calcResult").textContent = "Opération invalide.";
+        alert("Cette adresse ne semble pas valide.");
         return;
       }
-      try {
-        const result = Function('"use strict"; return (' + expression + ')')();
-        $("calcResult").textContent = Number.isFinite(result)
-          ? "Résultat : " + result
-          : "Résultat non valide.";
-      } catch {
-        $("calcResult").textContent = "Impossible de calculer cette opération.";
+      if (!["http:", "https:"].includes(url.protocol)) {
+        alert("Seules les adresses HTTP et HTTPS sont autorisées.");
+        return;
       }
+      window.open(url.href, "_blank", "noopener,noreferrer");
     };
   }
 
-  if (name === "notes") {
-    $("noteText").value = localStorage.getItem(STORAGE_KEY) || "";
-    $("saveNote").onclick = () => {
-      try {
-        localStorage.setItem(STORAGE_KEY, $("noteText").value);
-        $("noteStatus").textContent = "Note enregistrée.";
-      } catch {
-        $("noteStatus").textContent = "Enregistrement indisponible dans ce navigateur.";
-      }
-    };
-    $("downloadNote").onclick = () => {
-      const blob = new Blob([$("noteText").value], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "liquidos-notes.txt";
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+  if (app === "calculator") {
+    calcExpression = "";
+    modalContent.innerHTML = `
+      <input class="calc-display" id="calcDisplay" value="0" readonly aria-label="Résultat">
+      <div class="calc-grid">
+        ${["7","8","9","÷","4","5","6","×","1","2","3","−","C","0",".","+","(",")","⌫","="].map(k =>
+          `<button type="button" data-key="${k}">${k}</button>`).join("")}
+      </div>`;
+    $$("[data-key]").forEach(button => button.addEventListener("click", () => calcKey(button.dataset.key)));
+  }
+
+  if (app === "settings") {
+    modalContent.innerHTML = `
+      <p>Personnalise l’apparence de LiquidOS.</p>
+      <label for="modalAccent">Couleur</label>
+      <select class="field" id="modalAccent">
+        <option value="blue">Bleu glacier</option>
+        <option value="mint">Vert menthe</option>
+        <option value="purple">Violet</option>
+        <option value="amber">Ambre</option>
+      </select>
+      <label for="wallpaperChoice">Fond d’écran</label>
+      <select class="field" id="wallpaperChoice">
+        <option value="blue">Bleu et violet</option>
+        <option value="green">Vert et bleu</option>
+        <option value="black">Noir profond</option>
+      </select>
+      <button class="action" id="resetSettings">Réinitialiser l’apparence</button>
+      <p>Ces réglages sont enregistrés dans le navigateur.</p>`;
+    $("#modalAccent").value = localStorage.getItem("liquidos-accent") || "blue";
+    $("#modalAccent").onchange = event => setAccent(event.target.value);
+    const wallpaper = localStorage.getItem("liquidos-wallpaper") || "blue";
+    $("#wallpaperChoice").value = wallpaper;
+    $("#wallpaperChoice").onchange = event => setWallpaper(event.target.value);
+    $("#resetSettings").onclick = () => {
+      setAccent("blue");
+      setWallpaper("blue");
+      $("#brightness").value = 100;
+      document.documentElement.style.setProperty("--brightness", 1);
+      document.body.classList.remove("dimmed");
+      localStorage.removeItem("liquidos-brightness");
+      $("#modalAccent").value = "blue";
+      $("#wallpaperChoice").value = "blue";
     };
   }
 
-  if (name === "media") {
-    $("mediaYoutube").onclick = () => window.open("https://m.youtube.com/", "_blank", "noopener");
-    $("mediaRadio").onclick = () => window.open("https://www.radio.fr/", "_blank", "noopener");
+  if (app === "notes") {
+    modalContent.innerHTML = `
+      <p>Vos notes sont enregistrées dans ce navigateur.</p>
+      <textarea class="field" id="noteText" placeholder="Écris ici…"></textarea>
+      <div>
+        <button class="action primary" id="saveNote">Enregistrer</button>
+        <button class="action" id="exportNote">Exporter en TXT</button>
+      </div>
+      <p class="note-status" id="noteStatus"></p>`;
+    $("#noteText").value = localStorage.getItem("liquidos-note") || "";
+    $("#saveNote").onclick = () => {
+      localStorage.setItem("liquidos-note", $("#noteText").value);
+      $("#noteStatus").textContent = "Note enregistrée.";
+    };
+    $("#exportNote").onclick = () => {
+      const blob = new Blob([$("#noteText").value], {type:"text/plain;charset=utf-8"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "ma-note-liquidos.txt";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    };
   }
 
-  if (name === "calendar") {
-    $("calendarDate").textContent = new Date().toLocaleDateString("fr-FR", {
-      weekday: "long", day: "numeric", month: "long", year: "numeric"
-    });
+  if (app === "media") {
+    modalContent.innerHTML = `
+      <p>Accès rapide à quelques services en ligne.</p>
+      <button class="action" data-url="https://m.youtube.com">▶ YouTube</button>
+      <button class="action" data-url="https://radio.fr">♫ Radio</button>
+      <button class="action" data-url="https://music.youtube.com">♪ YouTube Music</button>
+      <p>Ces services nécessitent une connexion Internet.</p>`;
+    $$("[data-url]").forEach(button => button.onclick = () =>
+      window.open(button.dataset.url, "_blank", "noopener,noreferrer"));
+  }
+
+  if (app === "calendar") {
+    modalContent.innerHTML = `
+      <p>Aujourd’hui</p>
+      <h3>${new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long", year:"numeric"})}</h3>
+      <p>Le calendrier affiche la date actuelle. Les événements ne sont pas encore pris en charge.</p>`;
+  }
+
+  if (app === "about") {
+    modalContent.innerHTML = `
+      <h3>LiquidOS 0.3</h3>
+      <p>Une interface expérimentale conçue pour explorer une expérience numérique moderne.</p>
+      <p><strong>Fonctionne dans :</strong> un navigateur web compatible.</p>
+      <p><strong>Important :</strong> LiquidOS est un prototype web, pas un système d’exploitation Android autonome. Il ne remplace ni le démarrage Android, ni les réglages matériels de la tablette.</p>`;
   }
 }
 
-function applyAccent(color) {
-  document.documentElement.style.setProperty("--accent", color);
+function calcKey(key) {
+  const display = $("#calcDisplay");
+  if (key === "C") calcExpression = "";
+  else if (key === "⌫") calcExpression = calcExpression.slice(0, -1);
+  else if (key === "=") {
+    try {
+      if (!calcExpression || !/^[0-9+\-*/().\s]+$/.test(calcExpression)) throw Error();
+      const result = Function('"use strict"; return (' + calcExpression + ')')();
+      if (!Number.isFinite(result)) throw Error();
+      calcExpression = String(Math.round((result + Number.EPSILON) * 1e8) / 1e8);
+    } catch {
+      display.value = "Erreur";
+      calcExpression = "";
+      return;
+    }
+  } else {
+    const translated = {"÷":"/","×":"*","−":"-"};
+    calcExpression += translated[key] || key;
+  }
+  display.value = calcExpression.replace(/\*/g, "×").replace(/\//g, "÷") || "0";
 }
-function applyWallpaper(choice) {
+
+function setWallpaper(value) {
   const backgrounds = {
-    blue: "radial-gradient(ellipse at 10% 10%, #283e68 0%, transparent 43%), radial-gradient(ellipse at 95% 70%, #45325f 0%, transparent 40%), var(--bg)",
-    green: "radial-gradient(ellipse at 10% 10%, #214c4b 0%, transparent 43%), radial-gradient(ellipse at 95% 70%, #283e68 0%, transparent 40%), var(--bg)",
-    dark: "#080a10"
+    blue: "radial-gradient(ellipse at 18% 20%, #244a83 0, transparent 38%), radial-gradient(ellipse at 80% 35%, #513780 0, transparent 36%), radial-gradient(ellipse at 50% 90%, #102e4d 0, transparent 42%), #080d1c",
+    green: "radial-gradient(ellipse at 18% 20%, #176b61 0, transparent 38%), radial-gradient(ellipse at 80% 35%, #244a83 0, transparent 36%), #080d1c",
+    black: "#03050a"
   };
-  document.body.style.background = backgrounds[choice] || backgrounds.blue;
+  $(".wallpaper").style.background = backgrounds[value] || backgrounds.blue;
+  localStorage.setItem("liquidos-wallpaper", value);
 }
+setWallpaper(localStorage.getItem("liquidos-wallpaper") || "blue");
 
-document.querySelectorAll("[data-app]").forEach(button => {
-  button.addEventListener("click", () => showPanel(button.dataset.app));
+$$("[data-app]").forEach(button => {
+  button.addEventListener("click", () => openApp(button.dataset.app));
 });
-
-$("closePanel").addEventListener("click", () => overlay.classList.remove("open"));
-overlay.addEventListener("click", e => {
-  if (e.target === overlay) overlay.classList.remove("open");
+$("#closeModal").addEventListener("click", () => backdrop.classList.add("hidden"));
+backdrop.addEventListener("click", event => {
+  if (event.target === backdrop) backdrop.classList.add("hidden");
 });
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") overlay.classList.remove("open");
-});
-
-$("searchForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const query = $("searchInput").value.trim();
-  if (query) {
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(query), "_blank", "noopener");
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    backdrop.classList.add("hidden");
+    closeControl();
   }
 });
-
-// Restaure la personnalisation enregistrée.
-applyAccent(localStorage.getItem("liquidos-accent") || "#9bbdff");
-applyWallpaper(localStorage.getItem("liquidos-wall") || "blue");
+$("#searchForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const query = $("#searchInput").value.trim();
+  if (query) window.open("https://www.google.com/search?q=" + encodeURIComponent(query), "_blank", "noopener,noreferrer");
+});
 </script>
 </body>
 </html>
