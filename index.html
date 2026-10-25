@@ -1,50 +1,48 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#080d1c">
-  <meta name="description" content="LiquidOS 0.4 — un bureau numérique moderne">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <title>LiquidOS 0.4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10131c">
+  <meta name="description" content="LiquidOS — une interface personnelle fluide et moderne.">
+  <title>LiquidOS</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
 
   <style>
     :root {
       color-scheme: dark;
-      --accent: #85b5ff;
-      --accent2: #b29aff;
-      --bg: #080d1c;
-      --glass: rgba(255,255,255,.075);
+      --bg: #10131c;
+      --panel: rgba(255,255,255,.09);
+      --panel-strong: rgba(255,255,255,.15);
       --border: rgba(255,255,255,.14);
-      --text: #f5f7ff;
-      --muted: #a8b5ce;
-      --brightness: 1;
+      --text: #f6f7ff;
+      --muted: #aeb5c9;
+      --accent: #8eabff;
+      --radius: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    html {
+    html, body {
       width: 100%;
       min-height: 100%;
+      margin: 0;
       background: var(--bg);
+      color: var(--text);
     }
 
     body {
-      margin: 0;
-      width: 100%;
-      min-height: 100vh;
       min-height: 100dvh;
-      overflow-x: hidden;
-      color: var(--text);
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(77,91,177,.38), transparent 45%),
+        radial-gradient(ellipse at 85% 80%, rgba(34,155,180,.23), transparent 45%),
+        var(--bg);
     }
 
     button, input, textarea, select {
@@ -54,318 +52,77 @@
     button {
       color: inherit;
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible,
-    select:focus-visible {
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
 
-    .wallpaper {
-      position: fixed;
-      inset: -10%;
-      z-index: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse at 18% 20%, #214d88 0, transparent 38%),
-        radial-gradient(ellipse at 82% 35%, #50337d 0, transparent 38%),
-        radial-gradient(ellipse at 50% 90%, #10364e 0, transparent 42%),
-        var(--bg);
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-
-    @keyframes drift {
-      from { transform: translate(-1%, -1%) scale(1); }
-      to { transform: translate(2%, 1%) scale(1.08); }
+    .hidden {
+      display: none !important;
     }
 
     .glass {
-      background: var(--glass);
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      box-shadow: 0 12px 40px rgba(0,0,0,.14);
-    }
-
-    .topbar,
-    main,
-    .dock {
-      position: relative;
-      z-index: 1;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 17px 22px;
-    }
-
-    .brand {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: .5px;
-    }
-
-    .brand span {
-      color: var(--accent);
-    }
-
-    .status,
-    .muted {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .small-btn,
-    .close-btn {
-      padding: 10px 13px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--glass);
-    }
-
-    main {
-      width: min(920px, calc(100% - 28px));
-      margin: 12px auto 110px;
-    }
-
-    .welcome {
-      margin: 25px 4px 22px;
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 8px 0;
-      font-size: clamp(37px, 7vw, 57px);
-      letter-spacing: -2px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .search {
-      display: flex;
-      gap: 9px;
-      margin: 20px 0 27px;
-      padding: 9px;
-    }
-
-    .field,
-    .search input {
-      width: 100%;
-      min-width: 0;
-      padding: 13px;
-      color: var(--text);
-      background: rgba(0,0,0,.18);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-    }
-
-    .search input {
-      flex: 1;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: var(--muted);
-    }
-
-    .primary {
-      padding: 12px 17px;
-      color: #071020;
-      font-weight: 750;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: 0;
-      border-radius: 14px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 24px 3px 13px;
-    }
-
-    .section-head h2 {
-      margin: 0;
-      font-size: 17px;
-    }
-
-    .app-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .app-icon {
-      display: flex;
-      min-width: 0;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 17px 3px;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: var(--glass);
+      box-shadow: 0 12px 35px rgba(0,0,0,.16);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      transition: transform .2s, background .2s;
-    }
-
-    .app-icon:active {
-      transform: scale(.96);
-    }
-
-    .app-icon:hover {
-      background: rgba(255,255,255,.14);
-    }
-
-    .emoji {
-      font-size: 27px;
-    }
-
-    .app-name {
-      font-size: 12px;
-    }
-
-    .widgets {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .widget {
-      min-width: 0;
-      padding: 19px;
-    }
-
-    .widget h3 {
-      margin: 0 0 10px;
-      font-size: 14px;
-    }
-
-    .widget p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .big-time {
-      display: block;
-      margin: 8px 0;
-      font-size: clamp(28px, 6vw, 42px);
-      line-height: 1.2;
-      letter-spacing: -1px;
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .dock {
-      position: fixed;
-      z-index: 4;
-      left: 50%;
-      bottom: max(13px, env(safe-area-inset-bottom));
-      display: flex;
-      gap: 8px;
-      max-width: calc(100vw - 24px);
-      padding: 9px;
-      border: 1px solid var(--border);
-      border-radius: 23px;
-      background: rgba(11,17,35,.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      transform: translateX(-50%);
-    }
-
-    .dock button {
-      flex-shrink: 0;
-      width: 47px;
-      height: 47px;
-      border: 1px solid transparent;
-      border-radius: 16px;
-      background: var(--glass);
-      font-size: 22px;
-    }
-
-    .dock button:hover {
-      border-color: var(--border);
-    }
-
-    .footer {
-      margin: 28px 0;
-      color: var(--muted);
-      text-align: center;
-      font-size: 11px;
-      line-height: 1.6;
     }
 
     /* ÉCRAN DE VERROUILLAGE */
 
-    .lock-screen {
+    #lockScreen {
       position: fixed;
       inset: 0;
-      z-index: 10000;
+      z-index: 100;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr) auto auto;
-      justify-items: center;
-      align-items: center;
-      gap: 20px;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 12px;
       padding:
-        max(30px, env(safe-area-inset-top))
-        22px
-        max(25px, env(safe-area-inset-bottom));
-      overflow-y: auto;
+        max(22px, env(safe-area-inset-top))
+        max(18px, env(safe-area-inset-right))
+        max(22px, env(safe-area-inset-bottom))
+        max(18px, env(safe-area-inset-left));
       overflow-x: hidden;
-      text-align: center;
+      overflow-y: auto;
       background:
-        radial-gradient(ellipse at 18% 25%, rgba(47,105,194,.7), transparent 43%),
-        radial-gradient(ellipse at 82% 68%, rgba(116,65,177,.58), transparent 43%),
-        #070b18;
-      transition: opacity .3s, visibility .3s;
+        radial-gradient(ellipse at 50% 25%, rgba(109,127,224,.35), transparent 55%),
+        linear-gradient(145deg, #141a2b, #10131c 65%, #172b3b);
     }
 
-    .lock-screen > .brand {
-      align-self: start;
-      justify-self: center;
-      padding-top: 5px;
+    .lock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .lock-status {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
     }
 
     .lock-center {
       display: flex;
-      width: 100%;
-      min-width: 0;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      align-self: center;
-      justify-self: center;
-      margin: 0;
+      gap: 14px;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      padding: 20px 0;
+      text-align: center;
     }
 
     .lock-time {
@@ -373,1033 +130,1007 @@
       width: 100%;
       max-width: 100%;
       margin: 0;
-      font-size: clamp(48px, 12vw, 100px);
+      padding: 0;
+      font-size: clamp(42px, 11vw, 84px);
       font-weight: 300;
-      line-height: 1.2;
+      line-height: 1.12;
       letter-spacing: -2px;
+      text-align: center;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
 
     .lock-date {
       max-width: 100%;
-      margin-top: 12px;
-      color: #d1def5;
-      font-size: clamp(13px, 2.5vw, 17px);
+      color: #e0e5f6;
+      font-size: clamp(14px, 3.5vw, 18px);
       line-height: 1.5;
       overflow-wrap: anywhere;
     }
 
     .lock-message {
-      margin-top: 22px;
-      color: #c0cde5;
+      color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
     }
 
-    .unlock {
+    .unlock-button {
       justify-self: center;
-      min-width: 190px;
-      max-width: 100%;
-      padding: 15px 25px;
-      border: 1px solid rgba(255,255,255,.3);
-      border-radius: 18px;
+      width: min(100%, 280px);
+      min-height: 52px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 999px;
       background: rgba(255,255,255,.13);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      color: white;
+      font-weight: 600;
     }
 
-    .lock-bottom {
-      align-self: end;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
+    .unlock-button:active {
+      transform: scale(.98);
     }
 
-    .lock-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+    /* INTERFACE PRINCIPALE */
 
-    /* CENTRE DE CONTRÔLE */
-
-    .scrim {
-      position: fixed;
-      inset: 0;
-      z-index: 9;
-      background: rgba(0,0,0,.45);
-      opacity: 0;
-      visibility: hidden;
-      transition: .25s;
-    }
-
-    .scrim.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .control-panel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      z-index: 10;
-      width: min(390px, 94vw);
-      height: 100vh;
+    #homeScreen {
       height: 100dvh;
-      padding:
-        max(24px, env(safe-area-inset-top))
-        19px
-        max(24px, env(safe-area-inset-bottom));
-      overflow-x: hidden;
-      overflow-y: auto;
-      background: rgba(12,18,38,.97);
-      border-left: 1px solid var(--border);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      transform: translateX(105%);
-      transition: transform .3s ease;
-    }
-
-    .control-panel.visible {
-      transform: translateX(0);
-    }
-
-    .panel-head {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 20px;
+      flex-direction: column;
+      gap: 18px;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+      overflow-y: auto;
     }
 
-    .panel-head h2 {
-      margin: 0;
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-title {
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: -.6px;
+    }
+
+    .topbar-date {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--panel);
       font-size: 20px;
     }
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .quick-toggle {
-      min-height: 85px;
-      padding: 13px;
-      text-align: left;
+    .welcome-card {
+      padding: 22px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(ellipse at 90% 10%, rgba(139,161,255,.32), transparent 55%),
+        var(--panel);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--glass);
     }
 
-    .quick-toggle.on {
-      background: linear-gradient(
-        135deg,
-        rgba(92,151,255,.48),
-        rgba(155,110,255,.3)
-      );
+    .welcome-card h1 {
+      margin: 0 0 8px;
+      font-size: clamp(23px, 6vw, 34px);
+      font-weight: 600;
+      letter-spacing: -1px;
     }
 
-    .qicon {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 22px;
-    }
-
-    .quick-toggle small {
-      display: block;
-      margin-top: 5px;
+    .welcome-card p {
+      margin: 0;
       color: var(--muted);
-      font-size: 10px;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
-    .control-section {
-      margin-top: 17px;
-      padding: 16px;
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 650;
     }
 
-    .control-section label {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 13px;
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
 
-    .control-section input[type="range"] {
-      width: 100%;
-      accent-color: var(--accent);
+    .app-tile {
+      min-width: 0;
+      min-height: 105px;
+      padding: 14px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 21px;
+      background: var(--panel);
+      text-align: center;
+    }
+
+    .app-tile:active {
+      background: var(--panel-strong);
+      transform: scale(.97);
+    }
+
+    .app-icon {
+      display: grid;
+      place-items: center;
+      width: 47px;
+      height: 47px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.11);
+      font-size: 24px;
+    }
+
+    .app-label {
+      font-size: 12px;
+      font-weight: 550;
+      overflow-wrap: anywhere;
+    }
+
+    .dock {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+      margin-top: auto;
+      border-radius: 23px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+    }
+
+    .dock button {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      min-height: 48px;
+      border: 0;
+      border-radius: 15px;
+      background: transparent;
+      font-size: 23px;
+    }
+
+    .dock button:active {
+      background: var(--panel-strong);
     }
 
     /* FENÊTRES DES APPLICATIONS */
 
-    .modal-backdrop {
+    .app-window {
       position: fixed;
       inset: 0;
-      z-index: 20;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(18px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+      overflow-y: auto;
+      background:
+        radial-gradient(ellipse at 85% 5%, rgba(95,114,206,.28), transparent 50%),
+        #10131c;
+    }
+
+    .window-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 15px;
-      background: rgba(2,5,15,.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      gap: 12px;
+      min-height: 48px;
     }
 
-    .modal-backdrop.hidden {
-      display: none;
+    .window-header h2 {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      font-size: 21px;
+      font-weight: 650;
     }
 
-    .modal {
-      width: min(500px, 100%);
-      max-height: 85vh;
-      max-height: 85dvh;
-      padding: 21px;
-      overflow-y: auto;
+    .window-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .card {
+      padding: 18px;
       border: 1px solid var(--border);
-      border-radius: 25px;
-      background: #111a30;
-      box-shadow: 0 25px 90px rgba(0,0,0,.4);
+      border-radius: 22px;
+      background: var(--panel);
     }
 
-    .modal-title {
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .text-input, .text-area, .select-input {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(0,0,0,.2);
+      color: var(--text);
+    }
+
+    .text-area {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .action-button {
+      min-height: 46px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--panel-strong);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button-row > button {
+      flex: 1 1 120px;
+    }
+
+    .setting-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 18px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
     }
 
-    .modal-title h2 {
-      margin: 0;
-      font-size: 20px;
+    .setting-row:last-child {
+      border-bottom: 0;
     }
 
-    .modal-content {
-      color: var(--muted);
-      line-height: 1.6;
+    .setting-row label {
+      font-size: 14px;
     }
 
-    .modal-content .field {
-      display: block;
-      margin: 10px 0;
-    }
-
-    .modal-content textarea {
-      min-height: 135px;
-      resize: vertical;
-    }
-
-    .action {
-      margin: 4px 4px 4px 0;
-      padding: 10px 13px;
+    input[type="color"] {
+      width: 48px;
+      height: 38px;
+      padding: 2px;
       border: 1px solid var(--border);
-      border-radius: 13px;
-      background: var(--glass);
+      border-radius: 10px;
+      background: transparent;
     }
 
-    .action.primary {
-      color: #071020;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    input[type="range"] {
+      width: 120px;
+      accent-color: var(--accent);
     }
 
     .calc-display {
       width: 100%;
-      margin-bottom: 10px;
-      padding: 16px;
+      min-height: 72px;
+      padding: 18px;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(0,0,0,.25);
-      color: white;
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
       text-align: right;
-      font-size: 25px;
+      font-size: 28px;
+      overflow-wrap: anywhere;
     }
 
     .calc-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 7px;
+      gap: 8px;
     }
 
     .calc-grid button {
-      min-width: 0;
-      padding: 15px 2px;
+      min-height: 55px;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--glass);
+      border-radius: 15px;
+      background: var(--panel);
+      font-size: 18px;
     }
 
-    .note-status {
-      color: var(--accent);
+    .calc-grid button:active {
+      background: var(--panel-strong);
+    }
+
+    .status-message {
+      min-height: 20px;
+      color: var(--muted);
       font-size: 12px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 600px) {
-      .topbar {
-        padding: 14px;
-      }
-
-      main {
-        width: calc(100% - 22px);
-        margin-top: 3px;
-      }
-
+    @media (max-width: 360px) {
       .app-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
       }
 
+      .app-tile {
+        min-height: 94px;
+      }
+
       .app-icon {
-        padding: 14px 2px;
-        border-radius: 18px;
-      }
-
-      .emoji {
-        font-size: 24px;
-      }
-
-      .widgets {
-        grid-template-columns: 1fr;
-      }
-
-      .dock button {
-        width: 43px;
-        height: 43px;
-      }
-
-      .lock-screen {
-        gap: 16px;
-        padding-right: 16px;
-        padding-left: 16px;
+        width: 41px;
+        height: 41px;
       }
 
       .lock-time {
-        font-size: clamp(46px, 14vw, 78px);
-        letter-spacing: -1px;
+        font-size: clamp(36px, 10vw, 52px);
+        letter-spacing: -1.5px;
       }
     }
 
-    @media (max-height: 500px) {
-      .lock-screen {
-        gap: 12px;
-        padding-top: 12px;
-        padding-bottom: 12px;
+    @media (max-height: 440px) {
+      #lockScreen {
+        gap: 4px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .lock-center {
+        gap: 5px;
+        padding: 4px 0;
       }
 
       .lock-time {
-        font-size: clamp(40px, 10vh, 65px);
-      }
-
-      .lock-date {
-        margin-top: 4px;
+        font-size: clamp(34px, 8vh, 54px);
       }
 
       .lock-message {
-        margin-top: 8px;
+        font-size: 11px;
       }
 
-      .unlock {
-        padding: 10px 20px;
+      .unlock-button {
+        min-height: 42px;
+        padding: 9px 18px;
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
+    @media (prefers-reduced-motion: no-preference) {
+      .app-window {
+        animation: appear .16s ease-out;
+      }
+
+      @keyframes appear {
+        from { opacity: .5; }
+        to { opacity: 1; }
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="wallpaper"></div>
+  <!-- ÉCRAN DE VERROUILLAGE -->
+  <section id="lockScreen" aria-label="Écran de verrouillage">
+    <header class="lock-top">
+      <div class="brand">LIQUIDOS</div>
+      <div class="lock-status">● LiquidOS actif</div>
+    </header>
 
-  <section class="lock-screen" id="lockScreen" aria-label="Écran de verrouillage">
-    <div class="brand">◈ LIQUID<span>OS</span></div>
+    <main class="lock-center">
+      <div id="lockTime" class="lock-time">--:--</div>
+      <div id="lockDate" class="lock-date">Chargement de la date…</div>
+      <div class="lock-message">Un nouvel espace. Une nouvelle expérience.</div>
+    </main>
 
-    <div class="lock-center">
-      <div class="lock-time" id="lockTime">--:--</div>
-      <div class="lock-date" id="lockDate">Chargement…</div>
-      <div class="lock-message">Votre espace numérique, autrement.</div>
-    </div>
-
-    <button class="unlock" id="unlockButton">Déverrouiller ↗</button>
-
-    <div class="lock-bottom">LIQUIDOS 0.4 · EXPÉRIMENTAL</div>
+    <button id="unlockButton" class="unlock-button" type="button">
+      Déverrouiller&nbsp; ↗
+    </button>
   </section>
 
-  <header class="topbar">
-    <div>
-      <div class="brand">◈ Liquid<span>OS</span></div>
-      <div class="status">Version 0.4 · Bureau expérimental</div>
-    </div>
-
-    <div class="top-actions">
-      <button class="small-btn" id="lockButton" aria-label="Verrouiller">⌑</button>
-      <button class="small-btn" id="controlButton" aria-label="Centre de contrôle">☷</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="welcome">
-      <div class="eyebrow">Votre espace personnel</div>
-      <h1>Bonjour.</h1>
-      <div class="subtitle" id="greetingDate">Bienvenue dans LiquidOS.</div>
-    </section>
-
-    <form class="search glass" id="searchForm">
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Rechercher sur Internet…"
-        aria-label="Rechercher sur Internet"
-        required
-      >
-      <button class="primary" type="submit">Chercher</button>
-    </form>
-
-    <div class="section-head">
-      <h2>Applications</h2>
-      <span class="status">Votre bureau</span>
-    </div>
-
-    <section class="app-grid">
-      <button class="app-icon" data-app="assistant">
-        <span class="emoji">✧</span>
-        <span class="app-name">Assistant</span>
-      </button>
-
-      <button class="app-icon" data-app="internet">
-        <span class="emoji">◎</span>
-        <span class="app-name">Internet</span>
-      </button>
-
-      <button class="app-icon" data-app="calculator">
-        <span class="emoji">÷</span>
-        <span class="app-name">Calculatrice</span>
-      </button>
-
-      <button class="app-icon" data-app="settings">
-        <span class="emoji">⚙</span>
-        <span class="app-name">Réglages</span>
-      </button>
-
-      <button class="app-icon" data-app="notes">
-        <span class="emoji">▤</span>
-        <span class="app-name">Notes</span>
-      </button>
-
-      <button class="app-icon" data-app="media">
-        <span class="emoji">♫</span>
-        <span class="app-name">Média</span>
-      </button>
-
-      <button class="app-icon" data-app="calendar">
-        <span class="emoji">▦</span>
-        <span class="app-name">Calendrier</span>
-      </button>
-
-      <button class="app-icon" data-app="about">
-        <span class="emoji">◈</span>
-        <span class="app-name">À propos</span>
-      </button>
-    </section>
-
-    <section class="widgets">
-      <div class="widget glass">
-        <h3>Heure locale</h3>
-        <div class="big-time" id="homeTime">--:--</div>
-        <p id="homeDate">Chargement de la date…</p>
+  <!-- ÉCRAN D'ACCUEIL -->
+  <main id="homeScreen" class="hidden">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">LiquidOS</div>
+        <div id="homeDate" class="topbar-date">Bienvenue</div>
       </div>
+      <button class="icon-button" data-open="settings" aria-label="Réglages">⚙</button>
+    </header>
 
-      <div class="widget glass">
-        <h3>LiquidOS 0.4</h3>
-        <p>
-          Un bureau numérique inspiré du verre liquide,
-          conçu pour évoluer avec votre tablette.
-        </p>
+    <section class="welcome-card">
+      <h1>Un espace à toi.</h1>
+      <p>Une interface fluide, pensée pour garder tes applications et tes idées à portée de main.</p>
+    </section>
+
+    <section>
+      <h2 class="section-title">Applications</h2>
+      <div class="app-grid">
+        <button class="app-tile" data-open="assistant">
+          <span class="app-icon">✦</span><span class="app-label">Assistant</span>
+        </button>
+        <button class="app-tile" data-open="internet">
+          <span class="app-icon">◎</span><span class="app-label">Internet</span>
+        </button>
+        <button class="app-tile" data-open="calculator">
+          <span class="app-icon">＋</span><span class="app-label">Calculatrice</span>
+        </button>
+        <button class="app-tile" data-open="notes">
+          <span class="app-icon">▤</span><span class="app-label">Notes</span>
+        </button>
+        <button class="app-tile" data-open="calendar">
+          <span class="app-icon">▦</span><span class="app-label">Calendrier</span>
+        </button>
+        <button class="app-tile" data-open="media">
+          <span class="app-icon">♫</span><span class="app-label">Médias</span>
+        </button>
+        <button class="app-tile" data-open="settings">
+          <span class="app-icon">⚙</span><span class="app-label">Réglages</span>
+        </button>
+        <button class="app-tile" data-open="about">
+          <span class="app-icon">ⓘ</span><span class="app-label">À propos</span>
+        </button>
+        <button class="app-tile" data-open="control">
+          <span class="app-icon">☷</span><span class="app-label">Centre de contrôle</span>
+        </button>
       </div>
     </section>
 
-    <div class="footer">
-      Prototype web indépendant. LiquidOS ne remplace pas Android.
-    </div>
+    <nav class="dock" aria-label="Raccourcis">
+      <button data-open="internet" aria-label="Internet">◎</button>
+      <button data-open="notes" aria-label="Notes">▤</button>
+      <button data-open="calculator" aria-label="Calculatrice">＋</button>
+      <button id="relockButton" aria-label="Verrouiller">🔒</button>
+    </nav>
   </main>
 
-  <nav class="dock" aria-label="Raccourcis">
-    <button data-app="internet" aria-label="Internet">◎</button>
-    <button data-app="notes" aria-label="Notes">▤</button>
-    <button data-app="calculator" aria-label="Calculatrice">÷</button>
-    <button id="dockControl" aria-label="Centre de contrôle">☷</button>
-  </nav>
-
-  <div class="scrim" id="scrim"></div>
-
-  <aside class="control-panel" id="controlPanel" aria-label="Centre de contrôle">
-    <div class="panel-head">
-      <h2>Centre de contrôle</h2>
-      <button class="close-btn" id="closeControl" aria-label="Fermer">✕</button>
-    </div>
-
-    <p class="status" id="controlDate"></p>
-
-    <div class="quick-grid">
-      <button class="quick-toggle on" data-toggle="wifi" aria-pressed="true">
-        <span class="qicon">⌁</span>
-        Wi-Fi
-        <small>Simulation visuelle</small>
-      </button>
-
-      <button class="quick-toggle" data-toggle="bluetooth" aria-pressed="false">
-        <span class="qicon">ᛒ</span>
-        Bluetooth
-        <small>Simulation visuelle</small>
-      </button>
-
-      <button class="quick-toggle" data-toggle="airplane" aria-pressed="false">
-        <span class="qicon">✈</span>
-        Mode avion
-        <small>Simulation visuelle</small>
-      </button>
-
-      <button class="quick-toggle on" data-toggle="focus" aria-pressed="true">
-        <span class="qicon">☾</span>
-        Concentration
-        <small>Simulation visuelle</small>
-      </button>
-    </div>
-
-    <div class="control-section glass">
-      <label for="brightness">Luminosité de l’interface</label>
-      <input type="range" id="brightness" min="50" max="100" value="100">
-      <p class="status">
-        Modifie l’apparence de la page, pas la luminosité matérielle.
-      </p>
-    </div>
-
-    <div class="control-section glass">
-      <label for="accentSelect">Couleur d’accentuation</label>
-      <select class="field" id="accentSelect">
-        <option value="blue">Bleu glacier</option>
-        <option value="mint">Vert menthe</option>
-        <option value="purple">Violet</option>
-        <option value="amber">Ambre</option>
-      </select>
-    </div>
-
-    <p class="status">
-      Les boutons Wi-Fi, Bluetooth et mode avion ne contrôlent pas le matériel Android.
-    </p>
-  </aside>
-
-  <div class="modal-backdrop hidden" id="modalBackdrop">
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-title">
-        <h2 id="modalTitle">Application</h2>
-        <button class="close-btn" id="closeModal" aria-label="Fermer">✕</button>
+  <!-- ASSISTANT -->
+  <section id="app-assistant" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Assistant</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>Bonjour 👋</h3>
+        <p class="muted">Cet assistant est une démonstration locale de LiquidOS. Il ne se connecte pas à une intelligence artificielle.</p>
       </div>
+      <div class="field">
+        <label for="assistantInput">Écris quelque chose</label>
+        <input id="assistantInput" class="text-input" placeholder="Ex. : Bonjour LiquidOS">
+      </div>
+      <button id="assistantSend" class="action-button">Envoyer</button>
+      <div id="assistantReply" class="card muted">Tes messages apparaîtront ici.</div>
+    </div>
+  </section>
 
-      <div class="modal-content" id="modalContent"></div>
-    </section>
-  </div>
+  <!-- INTERNET -->
+  <section id="app-internet" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Internet</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>Recherche sur le Web</h3>
+        <p class="muted">Ouvre une recherche dans le navigateur de ta tablette.</p>
+        <form id="searchForm" class="field">
+          <input id="searchInput" class="text-input" placeholder="Rechercher sur Internet" required>
+          <button class="action-button" type="submit">Rechercher ↗</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Accès rapide</h3>
+        <div class="button-row">
+          <button class="action-button" data-url="https://www.wikipedia.org/">Wikipedia</button>
+          <button class="action-button" data-url="https://www.google.com/">Google</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATRICE -->
+  <section id="app-calculator" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Calculatrice</h2>
+    </header>
+    <div class="window-content">
+      <div id="calcDisplay" class="calc-display" aria-live="polite">0</div>
+      <div class="calc-grid">
+        <button data-calc="clear">C</button>
+        <button data-calc="(">(</button>
+        <button data-calc=")">)</button>
+        <button data-calc="/">÷</button>
+        <button data-calc="7">7</button>
+        <button data-calc="8">8</button>
+        <button data-calc="9">9</button>
+        <button data-calc="*">×</button>
+        <button data-calc="4">4</button>
+        <button data-calc="5">5</button>
+        <button data-calc="6">6</button>
+        <button data-calc="-">−</button>
+        <button data-calc="1">1</button>
+        <button data-calc="2">2</button>
+        <button data-calc="3">3</button>
+        <button data-calc="+">+</button>
+        <button data-calc="0">0</button>
+        <button data-calc=".">.</button>
+        <button data-calc="back">⌫</button>
+        <button data-calc="equals">=</button>
+      </div>
+      <p id="calcStatus" class="status-message"></p>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="app-notes" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Notes</h2>
+    </header>
+    <div class="window-content">
+      <div class="field">
+        <label for="notesArea">Tes notes (enregistrées sur cet appareil)</label>
+        <textarea id="notesArea" class="text-area" placeholder="Écris tes idées ici…"></textarea>
+      </div>
+      <div class="button-row">
+        <button id="saveNotes" class="action-button">Enregistrer</button>
+        <button id="exportNotes" class="action-button">Exporter en TXT</button>
+      </div>
+      <p id="notesStatus" class="status-message"></p>
+    </div>
+  </section>
+
+  <!-- CALENDRIER -->
+  <section id="app-calendar" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Calendrier</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3 id="calendarToday">Aujourd'hui</h3>
+        <p class="muted">La date et le jour actuels sont affichés selon l'horloge de ton appareil.</p>
+      </div>
+      <div class="field">
+        <label for="eventDate">Date à consulter</label>
+        <input id="eventDate" class="text-input" type="date">
+      </div>
+      <div id="calendarResult" class="card muted">Choisis une date.</div>
+    </div>
+  </section>
+
+  <!-- MÉDIAS -->
+  <section id="app-media" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Médias</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>Ton espace multimédia</h3>
+        <p class="muted">Cette version est une interface de démonstration. Elle ne parcourt pas automatiquement les fichiers de la tablette.</p>
+        <button id="openMedia" class="action-button">Choisir un fichier audio ou vidéo</button>
+        <input id="mediaFile" class="hidden" type="file" accept="audio/*,video/*">
+      </div>
+      <div id="mediaPlayerArea" class="card hidden">
+        <audio id="audioPlayer" controls class="hidden" style="width:100%"></audio>
+        <video id="videoPlayer" controls class="hidden" style="width:100%;max-height:50vh"></video>
+        <p id="mediaName" class="muted"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section id="app-settings" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Réglages</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>Personnalisation</h3>
+        <div class="setting-row">
+          <label for="accentPicker">Couleur d'accent</label>
+          <input id="accentPicker" type="color" value="#8eabff">
+        </div>
+        <div class="setting-row">
+          <label for="wallpaperPicker">Couleur de fond</label>
+          <input id="wallpaperPicker" type="color" value="#10131c">
+        </div>
+        <div class="setting-row">
+          <label for="clockToggle">Afficher l'heure sur l'accueil</label>
+          <input id="clockToggle" type="checkbox" checked>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Écran de verrouillage</h3>
+        <p class="muted">LiquidOS est une application Web : son verrouillage est visuel. Il ne remplace pas le verrouillage de sécurité Android.</p>
+        <button id="testLock" class="action-button">Afficher l'écran de verrouillage</button>
+      </div>
+      <p id="settingsStatus" class="status-message"></p>
+    </div>
+  </section>
+
+  <!-- CENTRE DE CONTRÔLE -->
+  <section id="app-control" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>Centre de contrôle</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>Raccourcis visuels</h3>
+        <p class="muted">Ces commandes changent uniquement l'apparence de LiquidOS. Elles ne pilotent pas directement le Wi-Fi, le Bluetooth ou la luminosité Android.</p>
+        <div class="setting-row">
+          <label for="wifiDemo">Wi-Fi (simulation)</label>
+          <input id="wifiDemo" type="checkbox" checked>
+        </div>
+        <div class="setting-row">
+          <label for="bluetoothDemo">Bluetooth (simulation)</label>
+          <input id="bluetoothDemo" type="checkbox">
+        </div>
+        <div class="setting-row">
+          <label for="brightnessDemo">Luminosité de l'interface</label>
+          <input id="brightnessDemo" type="range" min="50" max="120" value="100">
+        </div>
+        <p id="controlStatus" class="status-message"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- À PROPOS -->
+  <section id="app-about" class="app-window hidden">
+    <header class="window-header">
+      <button class="icon-button" data-back aria-label="Retour">‹</button>
+      <h2>À propos</h2>
+    </header>
+    <div class="window-content">
+      <div class="card">
+        <h3>LiquidOS</h3>
+        <p class="muted">Version 0.5 — Prototype Web</p>
+        <p class="muted">LiquidOS est un projet personnel qui expérimente une interface inspirée du verre liquide. Il s'agit d'une application Web installable, pas encore d'un véritable système d'exploitation.</p>
+        <p class="muted">Créé pour apprendre le HTML, le CSS et le JavaScript.</p>
+      </div>
+    </div>
+  </section>
 
   <script>
     "use strict";
 
-    const $ = selector => document.querySelector(selector);
-    const $$ = selector => document.querySelectorAll(selector);
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
-    /* HORLOGE */
+    const lockScreen = $("#lockScreen");
+    const homeScreen = $("#homeScreen");
+    const lockTime = $("#lockTime");
+    const lockDate = $("#lockDate");
 
     function updateClock() {
       const now = new Date();
 
-      const time = now.toLocaleTimeString("fr-FR", {
+      lockTime.textContent = new Intl.DateTimeFormat("fr-FR", {
         hour: "2-digit",
-        minute: "2-digit"
-      });
+        minute: "2-digit",
+        hour12: false
+      }).format(now);
 
-      const date = now.toLocaleDateString("fr-FR", {
+      lockDate.textContent = new Intl.DateTimeFormat("fr-FR", {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric"
-      });
+      }).format(now);
 
-      $("#lockTime").textContent = time;
-      $("#homeTime").textContent = time;
-      $("#lockDate").textContent = date;
-      $("#homeDate").textContent = date;
-      $("#controlDate").textContent = date;
+      $("#homeDate").textContent = new Intl.DateTimeFormat("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      }).format(now);
 
-      $("#greetingDate").textContent =
-        date.charAt(0).toUpperCase() + date.slice(1);
+      $("#calendarToday").textContent = new Intl.DateTimeFormat("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(now);
     }
 
     updateClock();
     setInterval(updateClock, 1000);
 
-    /* VERROUILLAGE VISUEL */
+    function unlock() {
+      lockScreen.classList.add("hidden");
+      homeScreen.classList.remove("hidden");
+    }
 
-    $("#unlockButton").addEventListener("click", () => {
-      $("#lockScreen").classList.add("hidden");
+    function relock() {
+      closeApps();
+      homeScreen.classList.add("hidden");
+      lockScreen.classList.remove("hidden");
+    }
+
+    $("#unlockButton").addEventListener("click", unlock);
+    $("#relockButton").addEventListener("click", relock);
+
+    function closeApps() {
+      $$(".app-window").forEach((app) => app.classList.add("hidden"));
+    }
+
+    function openApp(name) {
+      closeApps();
+      const target = $("#app-" + name);
+      if (target) target.classList.remove("hidden");
+    }
+
+    $$("[data-open]").forEach((button) => {
+      button.addEventListener("click", () => openApp(button.dataset.open));
     });
 
-    $("#lockButton").addEventListener("click", () => {
-      $("#lockScreen").classList.remove("hidden");
+    $$("[data-back]").forEach((button) => {
+      button.addEventListener("click", closeApps);
     });
 
-    /* CENTRE DE CONTRÔLE */
-
-    function openControl() {
-      $("#controlPanel").classList.add("visible");
-      $("#scrim").classList.add("visible");
-    }
-
-    function closeControl() {
-      $("#controlPanel").classList.remove("visible");
-      $("#scrim").classList.remove("visible");
-    }
-
-    $("#controlButton").addEventListener("click", openControl);
-    $("#dockControl").addEventListener("click", openControl);
-    $("#closeControl").addEventListener("click", closeControl);
-    $("#scrim").addEventListener("click", closeControl);
-
-    $$("[data-toggle]").forEach(button => {
-      button.addEventListener("click", () => {
-        const enabled = button.classList.toggle("on");
-        button.setAttribute("aria-pressed", String(enabled));
-      });
-    });
-
-    /* STOCKAGE LOCAL */
-
-    function storageGet(key, fallback = null) {
-      try {
-        const value = localStorage.getItem(key);
-        return value === null ? fallback : value;
-      } catch {
-        return fallback;
-      }
-    }
-
-    function storageSet(key, value) {
-      try {
-        localStorage.setItem(key, value);
-        return true;
-      } catch {
-        return false;
-      }
-    }
-
-    /* COULEURS */
-
-    const accents = {
-      blue: ["#85b5ff", "#b29aff"],
-      mint: ["#68e0c0", "#85b5ff"],
-      purple: ["#b49aff", "#f09bd5"],
-      amber: ["#ffd078", "#ff9fbd"]
-    };
-
-    function setAccent(value) {
-      const pair = accents[value] || accents.blue;
-
-      document.documentElement.style.setProperty("--accent", pair[0]);
-      document.documentElement.style.setProperty("--accent2", pair[1]);
-
-      $("#accentSelect").value = value;
-      storageSet("liquidos-accent", value);
-    }
-
-    setAccent(storageGet("liquidos-accent", "blue"));
-
-    $("#accentSelect").addEventListener("change", event => {
-      setAccent(event.target.value);
-    });
-
-    /* LUMINOSITÉ VISUELLE */
-
-    function setBrightness(value) {
-      const brightness = Math.min(100, Math.max(50, Number(value)));
-
-      document.documentElement.style.setProperty(
-        "--brightness",
-        String(brightness / 100)
-      );
-
-      $("#brightness").value = String(brightness);
-      storageSet("liquidos-brightness", String(brightness));
-    }
-
-    setBrightness(storageGet("liquidos-brightness", "100"));
-
-    $("#brightness").addEventListener("input", event => {
-      setBrightness(event.target.value);
-    });
-
-    /* FONDS D'ÉCRAN */
-
-    function setWallpaper(value) {
-      const backgrounds = {
-        blue: `
-          radial-gradient(ellipse at 18% 20%, #214d88 0, transparent 38%),
-          radial-gradient(ellipse at 82% 35%, #50337d 0, transparent 38%),
-          radial-gradient(ellipse at 50% 90%, #10364e 0, transparent 42%),
-          #080d1c`,
-        green: `
-          radial-gradient(ellipse at 18% 20%, #176b61 0, transparent 38%),
-          radial-gradient(ellipse at 82% 35%, #244a83 0, transparent 38%),
-          #080d1c`,
-        black: "#03050a"
-      };
-
-      $(".wallpaper").style.background =
-        backgrounds[value] || backgrounds.blue;
-
-      storageSet("liquidos-wallpaper", value);
-    }
-
-    setWallpaper(storageGet("liquidos-wallpaper", "blue"));
-
-    /* APPLICATIONS */
-
-    const backdrop = $("#modalBackdrop");
-    const modalTitle = $("#modalTitle");
-    const modalContent = $("#modalContent");
-
-    let calcExpression = "";
-
-    function closeApp() {
-      backdrop.classList.add("hidden");
-    }
-
-    function openApp(app) {
-      closeControl();
-
-      const titles = {
-        assistant: "Assistant",
-        internet: "Internet",
-        calculator: "Calculatrice",
-        settings: "Réglages",
-        notes: "Notes",
-        media: "Média",
-        calendar: "Calendrier",
-        about: "À propos"
-      };
-
-      modalTitle.textContent = titles[app] || "Application";
-      backdrop.classList.remove("hidden");
-
-      if (app === "assistant") {
-        modalContent.innerHTML = `
-          <p>Bienvenue dans l’assistant LiquidOS.</p>
-          <p>Cette démonstration locale n’est pas encore connectée à une IA.</p>
-          <button class="action primary" id="assistantHint">Idée de projet</button>
-          <p id="assistantAnswer"></p>
-        `;
-
-        $("#assistantHint").addEventListener("click", () => {
-          $("#assistantAnswer").textContent =
-            "Prochaine étape : ajouter des notifications et personnaliser les icônes.";
-        });
-      }
-
-      if (app === "internet") {
-        modalContent.innerHTML = `
-          <p>Rechercher sur Internet ou ouvrir une adresse web.</p>
-          <form id="internetForm">
-            <input class="field" id="webAddress"
-              placeholder="Recherche ou adresse web" required>
-            <button class="action primary" type="submit">Ouvrir</button>
-          </form>
-          <p>La page s’ouvrira dans un nouvel onglet si le navigateur l’autorise.</p>
-        `;
-
-        $("#internetForm").addEventListener("submit", event => {
-          event.preventDefault();
-
-          const value = $("#webAddress").value.trim();
-          if (!value) return;
-
-          let url;
-
-          try {
-            url = /^https?:\/\//i.test(value)
-              ? new URL(value)
-              : new URL(
-                  "https://www.google.com/search?q=" +
-                  encodeURIComponent(value)
-                );
-          } catch {
-            alert("Adresse invalide.");
-            return;
-          }
-
-          if (!["https:", "http:"].includes(url.protocol)) {
-            alert("Seules les adresses HTTP et HTTPS sont autorisées.");
-            return;
-          }
-
-          window.open(url.href, "_blank", "noopener,noreferrer");
-        });
-      }
-
-      if (app === "calculator") {
-        calcExpression = "";
-
-        modalContent.innerHTML = `
-          <input class="calc-display" id="calcDisplay"
-            value="0" readonly aria-label="Résultat">
-          <div class="calc-grid">
-            ${[
-              "7","8","9","÷",
-              "4","5","6","×",
-              "1","2","3","−",
-              "C","0",".","+",
-              "(",")","⌫","="
-            ].map(key =>
-              `<button type="button" data-key="${key}">${key}</button>`
-            ).join("")}
-          </div>
-        `;
-
-        $$("[data-key]").forEach(button => {
-          button.addEventListener("click", () => {
-            calcKey(button.dataset.key);
-          });
-        });
-      }
-
-      if (app === "settings") {
-        modalContent.innerHTML = `
-          <p>Personnalise l’apparence de ton bureau.</p>
-
-          <label for="modalAccent">Couleur</label>
-          <select class="field" id="modalAccent">
-            <option value="blue">Bleu glacier</option>
-            <option value="mint">Vert menthe</option>
-            <option value="purple">Violet</option>
-            <option value="amber">Ambre</option>
-          </select>
-
-          <label for="wallpaperChoice">Fond d’écran</label>
-          <select class="field" id="wallpaperChoice">
-            <option value="blue">Bleu et violet</option>
-            <option value="green">Vert et bleu</option>
-            <option value="black">Noir profond</option>
-          </select>
-
-          <button class="action" id="resetSettings">Réinitialiser</button>
-          <p>Les préférences sont conservées dans ce navigateur.</p>
-        `;
-
-        $("#modalAccent").value =
-          storageGet("liquidos-accent", "blue");
-
-        $("#modalAccent").addEventListener("change", event => {
-          setAccent(event.target.value);
-        });
-
-        $("#wallpaperChoice").value =
-          storageGet("liquidos-wallpaper", "blue");
-
-        $("#wallpaperChoice").addEventListener("change", event => {
-          setWallpaper(event.target.value);
-        });
-
-        $("#resetSettings").addEventListener("click", () => {
-          setAccent("blue");
-          setWallpaper("blue");
-          setBrightness(100);
-
-          $("#modalAccent").value = "blue";
-          $("#wallpaperChoice").value = "blue";
-        });
-      }
-
-      if (app === "notes") {
-        modalContent.innerHTML = `
-          <p>Les notes sont enregistrées dans ce navigateur.</p>
-          <textarea class="field" id="noteText"
-            placeholder="Écris ta note ici…"></textarea>
-          <button class="action primary" id="saveNote">Enregistrer</button>
-          <button class="action" id="exportNote">Exporter en TXT</button>
-          <p class="note-status" id="noteStatus"></p>
-        `;
-
-        $("#noteText").value = storageGet("liquidos-note", "");
-
-        $("#saveNote").addEventListener("click", () => {
-          const success = storageSet(
-            "liquidos-note",
-            $("#noteText").value
-          );
-
-          $("#noteStatus").textContent = success
-            ? "Note enregistrée."
-            : "Impossible d’enregistrer dans ce navigateur.";
-        });
-
-        $("#exportNote").addEventListener("click", () => {
-          const blob = new Blob([$("#noteText").value], {
-            type: "text/plain;charset=utf-8"
-          });
-
-          const link = document.createElement("a");
-          const url = URL.createObjectURL(blob);
-
-          link.href = url;
-          link.download = "ma-note-liquidos.txt";
-          link.click();
-
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-        });
-      }
-
-      if (app === "media") {
-        modalContent.innerHTML = `
-          <p>Raccourcis vers des services en ligne.</p>
-          <button class="action" data-url="https://m.youtube.com">▶ YouTube</button>
-          <button class="action" data-url="https://radio.fr">♫ Radio</button>
-          <button class="action" data-url="https://music.youtube.com">♪ Musique</button>
-          <p>Une connexion Internet est nécessaire.</p>
-        `;
-
-        $$("[data-url]").forEach(button => {
-          button.addEventListener("click", () => {
-            window.open(
-              button.dataset.url,
-              "_blank",
-              "noopener,noreferrer"
-            );
-          });
-        });
-      }
-
-      if (app === "calendar") {
-        modalContent.innerHTML = `
-          <p>Date du jour</p>
-          <h3>${new Date().toLocaleDateString("fr-FR", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-          })}</h3>
-          <p>Cette version affiche la date, mais ne synchronise pas encore les événements.</p>
-        `;
-      }
-
-      if (app === "about") {
-        modalContent.innerHTML = `
-          <h3>LiquidOS 0.4</h3>
-          <p>Un prototype d’interface numérique indépendant.</p>
-          <p>Technologies : HTML, CSS et JavaScript.</p>
-          <p>LiquidOS est une application web expérimentale. Elle ne remplace pas Android et ne contrôle pas directement le matériel de la tablette.</p>
-        `;
-      }
-    }
-
-    /* CALCULATRICE */
-
-    function calcKey(key) {
-      const display = $("#calcDisplay");
-
-      if (key === "C") {
-        calcExpression = "";
-      } else if (key === "⌫") {
-        calcExpression = calcExpression.slice(0, -1);
-      } else if (key === "=") {
-        try {
-          if (
-            !calcExpression ||
-            !/^[0-9+\-*/().\s]+$/.test(calcExpression)
-          ) {
-            throw new Error("Expression invalide");
-          }
-
-          const result = Function(
-            '"use strict"; return (' + calcExpression + ')'
-          )();
-
-          if (!Number.isFinite(result)) {
-            throw new Error("Résultat invalide");
-          }
-
-          calcExpression = String(
-            Math.round((result + Number.EPSILON) * 1e8) / 1e8
-          );
-        } catch {
-          display.value = "Erreur";
-          calcExpression = "";
-          return;
-        }
-      } else {
-        const translations = {
-          "÷": "/",
-          "×": "*",
-          "−": "-"
-        };
-
-        calcExpression += translations[key] || key;
-      }
-
-      display.value =
-        calcExpression.replace(/\*/g, "×").replace(/\//g, "÷") || "0";
-    }
-
-    /* OUVERTURE DES APPLICATIONS */
-
-    $$("[data-app]").forEach(button => {
-      button.addEventListener("click", () => {
-        openApp(button.dataset.app);
-      });
-    });
-
-    $("#closeModal").addEventListener("click", closeApp);
-
-    backdrop.addEventListener("click", event => {
-      if (event.target === backdrop) {
-        closeApp();
-      }
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") {
-        closeApp();
-        closeControl();
-      }
-    });
-
-    /* RECHERCHE WEB */
-
-    $("#searchForm").addEventListener("submit", event => {
+    // Recherche Internet
+    $("#searchForm").addEventListener("submit", (event) => {
       event.preventDefault();
-
       const query = $("#searchInput").value.trim();
       if (!query) return;
-
       window.open(
         "https://www.google.com/search?q=" + encodeURIComponent(query),
         "_blank",
-        "noopener,noreferrer"
+        "noopener"
       );
     });
 
-    /* SERVICE WORKER */
+    $$("[data-url]").forEach((button) => {
+      button.addEventListener("click", () => {
+        window.open(button.dataset.url, "_blank", "noopener");
+      });
+    });
 
+    // Assistant de démonstration
+    $("#assistantSend").addEventListener("click", () => {
+      const message = $("#assistantInput").value.trim();
+      if (!message) {
+        $("#assistantReply").textContent = "Écris un message avant d'envoyer.";
+        return;
+      }
+      $("#assistantReply").textContent =
+        "Tu as écrit : « " + message + " ». Ceci est une démonstration locale.";
+      $("#assistantInput").value = "";
+    });
+
+    // Calculatrice : uniquement des nombres et opérateurs autorisés
+    let calcExpression = "";
+    let calcFinished = false;
+    const calcDisplay = $("#calcDisplay");
+
+    function renderCalc() {
+      calcDisplay.textContent = calcExpression || "0";
+    }
+
+    function calculate() {
+      if (!calcExpression || !/^[0-9+\-*/().\s]+$/.test(calcExpression)) {
+        $("#calcStatus").textContent = "Expression invalide.";
+        return;
+      }
+
+      try {
+        // Vérification stricte des caractères avant l'évaluation.
+        const result = Function('"use strict"; return (' + calcExpression + ')')();
+
+        if (typeof result !== "number" || !Number.isFinite(result)) {
+          throw new Error("Résultat invalide");
+        }
+
+        calcExpression = String(Number(result.toPrecision(12)));
+        calcFinished = true;
+        $("#calcStatus").textContent = "";
+        renderCalc();
+      } catch {
+        $("#calcStatus").textContent = "Calcul impossible. Vérifie l'expression.";
+      }
+    }
+
+    $$("[data-calc]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.calc;
+
+        if (value === "clear") {
+          calcExpression = "";
+          calcFinished = false;
+          $("#calcStatus").textContent = "";
+        } else if (value === "back") {
+          calcExpression = calcExpression.slice(0, -1);
+          calcFinished = false;
+        } else if (value === "equals") {
+          calculate();
+          return;
+        } else {
+          if (calcFinished && /[0-9.(]/.test(value)) {
+            calcExpression = "";
+          }
+          calcFinished = false;
+          calcExpression += value;
+        }
+
+        renderCalc();
+      });
+    });
+
+    // Notes locales
+    const notesArea = $("#notesArea");
+    const notesStatus = $("#notesStatus");
+
+    try {
+      notesArea.value = localStorage.getItem("liquidos-notes") || "";
+    } catch {
+      notesStatus.textContent = "Le stockage local n'est pas disponible.";
+    }
+
+    $("#saveNotes").addEventListener("click", () => {
+      try {
+        localStorage.setItem("liquidos-notes", notesArea.value);
+        notesStatus.textContent = "Notes enregistrées sur cet appareil.";
+      } catch {
+        notesStatus.textContent = "Impossible d'enregistrer les notes.";
+      }
+    });
+
+    $("#exportNotes").addEventListener("click", () => {
+      const blob = new Blob([notesArea.value], {
+        type: "text/plain;charset=utf-8"
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "mes-notes-liquidos.txt";
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      notesStatus.textContent = "Export lancé.";
+    });
+
+    // Calendrier
+    const eventDate = $("#eventDate");
+    eventDate.value = new Date().toISOString().slice(0, 10);
+
+    function updateCalendarResult() {
+      if (!eventDate.value) {
+        $("#calendarResult").textContent = "Choisis une date.";
+        return;
+      }
+
+      const date = new Date(eventDate.value + "T12:00:00");
+      $("#calendarResult").textContent = new Intl.DateTimeFormat("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(date);
+    }
+
+    eventDate.addEventListener("change", updateCalendarResult);
+    updateCalendarResult();
+
+    // Lecture de fichiers audio ou vidéo sélectionnés par l'utilisateur
+    let activeMediaUrl = null;
+
+    $("#openMedia").addEventListener("click", () => $("#mediaFile").click());
+
+    $("#mediaFile").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (activeMediaUrl) URL.revokeObjectURL(activeMediaUrl);
+      activeMediaUrl = URL.createObjectURL(file);
+
+      const isVideo = file.type.startsWith("video/");
+      const audio = $("#audioPlayer");
+      const video = $("#videoPlayer");
+
+      audio.pause();
+      video.pause();
+      audio.classList.toggle("hidden", isVideo);
+      video.classList.toggle("hidden", !isVideo);
+      $("#mediaPlayerArea").classList.remove("hidden");
+      $("#mediaName").textContent = file.name;
+
+      if (isVideo) {
+        video.src = activeMediaUrl;
+        audio.removeAttribute("src");
+      } else {
+        audio.src = activeMediaUrl;
+        video.removeAttribute("src");
+      }
+    });
+
+    // Réglages de personnalisation
+    $("#accentPicker").addEventListener("input", (event) => {
+      document.documentElement.style.setProperty("--accent", event.target.value);
+      document.documentElement.style.setProperty("--panel-strong", event.target.value + "33");
+      $("#settingsStatus").textContent = "Couleur d'accent modifiée.";
+    });
+
+    $("#wallpaperPicker").addEventListener("input", (event) => {
+      document.documentElement.style.setProperty("--bg", event.target.value);
+      document.body.style.background = event.target.value;
+      $("#settingsStatus").textContent = "Couleur de fond modifiée.";
+    });
+
+    $("#clockToggle").addEventListener("change", (event) => {
+      $("#homeDate").style.display = event.target.checked ? "" : "none";
+    });
+
+    $("#testLock").addEventListener("click", relock);
+
+    // Centre de contrôle : simulation visuelle uniquement
+    $("#brightnessDemo").addEventListener("input", (event) => {
+      const value = Number(event.target.value) / 100;
+      homeScreen.style.filter = "brightness(" + value + ")";
+      $$(".app-window").forEach((app) => {
+        app.style.filter = "brightness(" + value + ")";
+      });
+      $("#controlStatus").textContent =
+        "Luminosité visuelle : " + event.target.value + "%.";
+    });
+
+    $("#wifiDemo").addEventListener("change", (event) => {
+      $("#controlStatus").textContent =
+        "Wi-Fi simulé : " + (event.target.checked ? "activé" : "désactivé") + ".";
+    });
+
+    $("#bluetoothDemo").addEventListener("change", (event) => {
+      $("#controlStatus").textContent =
+        "Bluetooth simulé : " + (event.target.checked ? "activé" : "désactivé") + ".";
+    });
+
+    // Enregistrement du service worker
     if ("serviceWorker" in navigator && location.protocol === "https:") {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js")
-          .then(() => {
-            console.info("LiquidOS : service worker enregistré.");
-          })
-          .catch(error => {
-            console.error(
-              "LiquidOS : échec de l'enregistrement du service worker.",
-              error
-            );
-          });
+          .catch((error) => console.error("Service worker :", error));
       });
     }
   </script>
