@@ -1,0 +1,22 @@
+
+{
+  "id": "./",
+  "name": "LiquidOS",
+  "short_name": "LiquidOS",
+  "description": "Une interface personnelle, fluide et moderne.",
+  "lang": "fr-FR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#10131d",
+  "theme_color": "#10131d",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
