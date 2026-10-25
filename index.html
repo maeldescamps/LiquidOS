@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -42,11 +41,22 @@
       font-family: Inter, "Segoe UI", Arial, sans-serif;
       background: var(--bg);
       overflow-x: hidden;
-      filter: brightness(var(--brightness));
+    }
+
+    /* Réglage visuel sans casser le positionnement des éléments fixes */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      opacity: calc(1 - var(--brightness));
+      pointer-events: none;
     }
 
     button, input, textarea, select { font: inherit; }
     button { color: inherit; cursor: pointer; }
+
     button:focus-visible, input:focus-visible,
     textarea:focus-visible, select:focus-visible {
       outline: 2px solid var(--accent);
@@ -63,6 +73,7 @@
         radial-gradient(ellipse at 50% 90%, #10364e 0, transparent 42%),
         var(--bg);
       animation: drift 18s ease-in-out infinite alternate;
+      pointer-events: none;
     }
 
     .wallpaper::after {
@@ -159,6 +170,7 @@
     }
 
     .search input { flex: 1; }
+
     input::placeholder, textarea::placeholder { color: #a8b5ce; }
 
     .primary {
@@ -214,8 +226,18 @@
 
     .widget { padding: 19px; }
     .widget h3 { font-size: 14px; margin: 0 0 10px; }
-    .widget p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; }
-    .big-time { font-size: clamp(28px, 6vw, 42px); letter-spacing: -1px; }
+
+    .widget p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .big-time {
+      font-size: clamp(28px, 6vw, 42px);
+      letter-spacing: -1px;
+    }
 
     .dock {
       position: fixed;
@@ -252,23 +274,29 @@
       line-height: 1.6;
     }
 
-    /* Verrouillage */
+    /* Écran de verrouillage adapté à toute la tablette */
     .lock-screen {
       position: fixed;
-      z-index: 30;
       inset: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      z-index: 10000;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: max(35px, env(safe-area-inset-top)) 24px
-               max(28px, env(safe-area-inset-bottom));
+      padding:
+        max(35px, env(safe-area-inset-top))
+        24px
+        max(28px, env(safe-area-inset-bottom));
       text-align: center;
       background:
         radial-gradient(ellipse at 18% 25%, rgba(47,105,194,.7), transparent 43%),
         radial-gradient(ellipse at 82% 68%, rgba(116,65,177,.58), transparent 43%),
         #070b18;
       transition: opacity .35s, visibility .35s;
+      overflow: auto;
     }
 
     .lock-screen.hidden {
@@ -278,6 +306,7 @@
     }
 
     .lock-center { margin: auto 0; }
+
     .lock-time {
       font-size: clamp(70px, 17vw, 115px);
       font-weight: 250;
@@ -294,6 +323,7 @@
       border-radius: 18px;
       background: rgba(255,255,255,.13);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .lock-bottom { color: var(--muted); font-size: 11px; }
@@ -320,8 +350,10 @@
       height: 100vh;
       height: 100dvh;
       overflow-y: auto;
-      padding: max(24px, env(safe-area-inset-top)) 19px
-               max(24px, env(safe-area-inset-bottom));
+      padding:
+        max(24px, env(safe-area-inset-top))
+        19px
+        max(24px, env(safe-area-inset-bottom));
       background: rgba(12,18,38,.96);
       border-left: 1px solid var(--border);
       backdrop-filter: blur(30px);
@@ -363,13 +395,28 @@
     }
 
     .qicon { display: block; font-size: 22px; margin-bottom: 7px; }
-    .quick-toggle small { display: block; color: var(--muted); margin-top: 5px; font-size: 10px; }
+
+    .quick-toggle small {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
+      font-size: 10px;
+    }
 
     .control-section { padding: 16px; margin-top: 17px; }
-    .control-section label { display: block; font-size: 13px; margin-bottom: 10px; }
-    .control-section input[type="range"] { width: 100%; accent-color: var(--accent); }
 
-    /* Applications */
+    .control-section label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .control-section input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    /* Fenêtres des applications */
     .modal-backdrop {
       position: fixed;
       z-index: 20;
@@ -380,6 +427,7 @@
       padding: 15px;
       background: rgba(2,5,15,.72);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .modal-backdrop.hidden { display: none; }
@@ -387,6 +435,7 @@
     .modal {
       width: min(500px, 100%);
       max-height: 85vh;
+      max-height: 85dvh;
       overflow-y: auto;
       padding: 21px;
       border: 1px solid var(--border);
@@ -404,6 +453,7 @@
     }
 
     .modal-title h2 { font-size: 20px; margin: 0; }
+
     .modal-content { color: var(--muted); line-height: 1.6; }
     .modal-content .field { display: block; margin: 10px 0; }
     .modal-content textarea { min-height: 135px; resize: vertical; }
@@ -416,7 +466,10 @@
       background: var(--glass);
     }
 
-    .action.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .action.primary {
+      color: #071020;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
 
     .calc-display {
       width: 100%;
@@ -469,12 +522,14 @@
 
   <section class="lock-screen" id="lockScreen" aria-label="Écran de verrouillage">
     <div class="brand">◈ LIQUID<span>OS</span></div>
+
     <div class="lock-center">
       <div class="lock-time" id="lockTime">--:--</div>
       <div class="lock-date" id="lockDate">Chargement…</div>
       <div class="lock-message">Votre espace numérique, autrement.</div>
     </div>
-    <button class="unlock" id="unlockButton">Déverrouiller　↗</button>
+
+    <button class="unlock" id="unlockButton">Déverrouiller ↗</button>
     <div class="lock-bottom">LIQUIDOS 0.4 · EXPÉRIMENTAL</div>
   </section>
 
@@ -483,6 +538,7 @@
       <div class="brand">◈ Liquid<span>OS</span></div>
       <div class="status">Version 0.4 · Bureau expérimental</div>
     </div>
+
     <div class="top-actions">
       <button class="small-btn" id="lockButton" aria-label="Verrouiller">⌑</button>
       <button class="small-btn" id="controlButton" aria-label="Centre de contrôle">☷</button>
@@ -498,8 +554,8 @@
 
     <form class="search glass" id="searchForm">
       <input id="searchInput" type="search"
-             placeholder="Rechercher sur Internet…"
-             aria-label="Rechercher sur Internet" required>
+        placeholder="Rechercher sur Internet…"
+        aria-label="Rechercher sur Internet" required>
       <button class="primary" type="submit">Chercher</button>
     </form>
 
@@ -509,14 +565,30 @@
     </div>
 
     <section class="app-grid">
-      <button class="app-icon" data-app="assistant"><span class="emoji">✧</span><span class="app-name">Assistant</span></button>
-      <button class="app-icon" data-app="internet"><span class="emoji">◎</span><span class="app-name">Internet</span></button>
-      <button class="app-icon" data-app="calculator"><span class="emoji">÷</span><span class="app-name">Calculatrice</span></button>
-      <button class="app-icon" data-app="settings"><span class="emoji">⚙</span><span class="app-name">Réglages</span></button>
-      <button class="app-icon" data-app="notes"><span class="emoji">▤</span><span class="app-name">Notes</span></button>
-      <button class="app-icon" data-app="media"><span class="emoji">♫</span><span class="app-name">Média</span></button>
-      <button class="app-icon" data-app="calendar"><span class="emoji">▦</span><span class="app-name">Calendrier</span></button>
-      <button class="app-icon" data-app="about"><span class="emoji">◈</span><span class="app-name">À propos</span></button>
+      <button class="app-icon" data-app="assistant">
+        <span class="emoji">✧</span><span class="app-name">Assistant</span>
+      </button>
+      <button class="app-icon" data-app="internet">
+        <span class="emoji">◎</span><span class="app-name">Internet</span>
+      </button>
+      <button class="app-icon" data-app="calculator">
+        <span class="emoji">÷</span><span class="app-name">Calculatrice</span>
+      </button>
+      <button class="app-icon" data-app="settings">
+        <span class="emoji">⚙</span><span class="app-name">Réglages</span>
+      </button>
+      <button class="app-icon" data-app="notes">
+        <span class="emoji">▤</span><span class="app-name">Notes</span>
+      </button>
+      <button class="app-icon" data-app="media">
+        <span class="emoji">♫</span><span class="app-name">Média</span>
+      </button>
+      <button class="app-icon" data-app="calendar">
+        <span class="emoji">▦</span><span class="app-name">Calendrier</span>
+      </button>
+      <button class="app-icon" data-app="about">
+        <span class="emoji">◈</span><span class="app-name">À propos</span>
+      </button>
     </section>
 
     <section class="widgets">
@@ -525,6 +597,7 @@
         <div class="big-time" id="homeTime">--:--</div>
         <p id="homeDate">Chargement de la date…</p>
       </div>
+
       <div class="widget glass">
         <h3>LiquidOS 0.4</h3>
         <p>Un bureau numérique inspiré du verre liquide, conçu pour évoluer avec votre tablette.</p>
@@ -612,11 +685,17 @@
     // Horloge et date
     function updateClock() {
       const now = new Date();
+
       const time = now.toLocaleTimeString("fr-FR", {
-        hour: "2-digit", minute: "2-digit"
+        hour: "2-digit",
+        minute: "2-digit"
       });
+
       const date = now.toLocaleDateString("fr-FR", {
-        weekday: "long", day: "numeric", month: "long", year: "numeric"
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
       });
 
       $("#lockTime").textContent = time;
@@ -704,10 +783,12 @@
     });
 
     const savedBrightness = Number(storageGet("liquidos-brightness", "100"));
-    $("#brightness").value = savedBrightness;
+    const safeBrightness = Math.min(100, Math.max(50, savedBrightness));
+
+    $("#brightness").value = safeBrightness;
     document.documentElement.style.setProperty(
       "--brightness",
-      Math.min(100, Math.max(50, savedBrightness)) / 100
+      safeBrightness / 100
     );
 
     $("#brightness").addEventListener("input", event => {
@@ -772,6 +853,7 @@
           if (!value) return;
 
           let url;
+
           try {
             url = /^https?:\/\//i.test(value)
               ? new URL(value)
@@ -793,6 +875,7 @@
 
       if (app === "calculator") {
         calcExpression = "";
+
         modalContent.innerHTML = `
           <input class="calc-display" id="calcDisplay"
             value="0" readonly aria-label="Résultat">
@@ -833,6 +916,7 @@
 
         $("#wallpaperChoice").value =
           storageGet("liquidos-wallpaper", "blue");
+
         $("#wallpaperChoice").addEventListener("change", event =>
           setWallpaper(event.target.value));
 
@@ -869,11 +953,13 @@
           const blob = new Blob([$("#noteText").value], {
             type: "text/plain;charset=utf-8"
           });
+
           const link = document.createElement("a");
           const url = URL.createObjectURL(blob);
           link.href = url;
           link.download = "ma-note-liquidos.txt";
           link.click();
+
           setTimeout(() => URL.revokeObjectURL(url), 1000);
         });
       }
@@ -897,7 +983,10 @@
         modalContent.innerHTML = `
           <p>Date du jour</p>
           <h3>${new Date().toLocaleDateString("fr-FR", {
-            weekday: "long", day: "numeric", month: "long", year: "numeric"
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
           })}</h3>
           <p>Cette version affiche la date, mais ne synchronise pas encore les événements.</p>`;
       }
@@ -911,7 +1000,7 @@
       }
     }
 
-    // Calculatrice : n'accepte que les chiffres et opérateurs autorisés.
+    // Calculatrice
     function calcKey(key) {
       const display = $("#calcDisplay");
 
@@ -930,7 +1019,9 @@
             '"use strict"; return (' + calcExpression + ')'
           )();
 
-          if (!Number.isFinite(result)) throw new Error("Résultat invalide");
+          if (!Number.isFinite(result)) {
+            throw new Error("Résultat invalide");
+          }
 
           calcExpression = String(
             Math.round((result + Number.EPSILON) * 1e8) / 1e8
@@ -974,9 +1065,7 @@
       button.addEventListener("click", () => openApp(button.dataset.app));
     });
 
-    $("#closeModal").addEventListener("click", () => {
-      backdrop.classList.add("hidden");
-    });
+    $("#closeModal").addEventListener("click", closeApp);
 
     backdrop.addEventListener("click", event => {
       if (event.target === backdrop) closeApp();
@@ -991,6 +1080,7 @@
 
     $("#searchForm").addEventListener("submit", event => {
       event.preventDefault();
+
       const query = $("#searchInput").value.trim();
       if (!query) return;
 
@@ -1001,7 +1091,7 @@
       );
     });
 
-    // Enregistrement du service worker déjà présent dans le dépôt.
+    // Enregistrement du service worker pour le mode hors ligne
     if ("serviceWorker" in navigator && location.protocol === "https:") {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js")
