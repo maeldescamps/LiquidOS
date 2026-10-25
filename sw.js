@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "liquidos-cache-v1";
+const CACHE_NAME = "liquidos-v06";
 
 const FILES_TO_CACHE = [
   "./",
@@ -8,47 +8,58 @@ const FILES_TO_CACHE = [
   "./icon.svg"
 ];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", function(event) {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(FILES_TO_CACHE))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames
+          .filter(function(name) {
+            return name !== CACHE_NAME;
+          })
+          .map(function(name) {
+            return caches.delete(name);
+          })
+      );
+    }).then(function() {
+      return self.clients.claim();
+    })
   );
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", function(event) {
   if (event.request.method !== "GET") return;
 
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
-
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => cache.put(event.request, copy));
+    fetch(event.request).then(function(response) {
+      if (response && response.ok && new URL(event.request.url).origin === self.location.origin) {
+        var copy = response.clone();
+
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(event.request, copy);
+        });
+      }
+
+      return response;
+    }).catch(function() {
+      return caches.match(event.request).then(function(cached) {
+        if (cached) return cached;
+
+        if (event.request.mode === "navigate") {
+          return caches.match("./index.html");
         }
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(event.request);
-        return cached || (event.request.mode === "navigate"
-          ? caches.match("./index.html")
-          : Response.error());
-      })
+
+        return Response.error();
+      });
+    })
   );
 });
