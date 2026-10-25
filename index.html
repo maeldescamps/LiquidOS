@@ -1,252 +1,1059 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0b1020">
-<meta name="description" content="LiquidOS, interface expérimentale pour tablette">
+<meta name="description" content="LiquidOS — interface expérimentale pour tablette">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg">
-<title>LiquidOS 0.7</title>
+<title>LiquidOS 0.8</title>
+
 <style>
-:root{--a:#83a9ff;--bg:#080c17;--p:rgba(23,30,49,.8);--t:#f4f6ff;--m:#a4aec7;--line:#ffffff20;--bright:1;--wall:radial-gradient(ellipse at 15% 15%,#344a8b99,transparent 45%),radial-gradient(ellipse at 80% 80%,#653d9a77,transparent 42%),linear-gradient(145deg,#101a32,#080c17)}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-button,input,textarea,select{font:inherit}
-button{color:inherit;cursor:pointer}
-#wall{position:fixed;inset:0;background:var(--wall);filter:brightness(var(--bright));z-index:0}
-#app{position:relative;height:100%;z-index:1}
-.hidden{display:none!important}
-.glass{background:var(--p);border:1px solid var(--line);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 18px 50px #0003}
-#status{position:absolute;z-index:20;top:0;left:0;right:0;height:30px;padding:0 15px;display:flex;justify-content:space-between;align-items:center;font-size:12px;text-shadow:0 1px 4px #000;pointer-events:auto}
-.screen{position:absolute;inset:0;overflow:auto;padding:48px 18px 82px;scrollbar-width:none}
-.screen::-webkit-scrollbar{display:none}
-#lock{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:35px}
-.clock{font-size:clamp(65px,15vw,105px);font-weight:250;letter-spacing:-5px;line-height:1}
-.date{font-size:14px;color:#d9e1fa;margin-top:10px}
-.unlock{margin-top:65px;padding:13px 23px;border:1px solid #ffffff3b;border-radius:30px;background:#ffffff12}
-.hint{position:absolute;bottom:27px;font-size:12px;color:#ffffff88}
-.head{display:flex;justify-content:space-between;align-items:start;margin:14px 2px 22px}
-.eyebrow{font-size:11px;color:var(--m);letter-spacing:.09em;text-transform:uppercase}
-.title{font-size:clamp(29px,6vw,42px);font-weight:650;letter-spacing:-1px;margin:4px 0}
-.muted{color:var(--m);font-size:12px}
-.avatar{width:42px;height:42px;border:0;border-radius:15px;background:linear-gradient(135deg,var(--a),#9b7be8);color:#11182b;font-weight:800}
-.widgets{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;margin-bottom:23px}
-.widget,.card{border:1px solid var(--line);border-radius:20px;background:#ffffff0a;padding:15px}
-.widget{min-height:94px}
-.wval{font-size:25px;margin-top:7px;font-weight:600}
-.sect{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 13px}
-.sect h2{font-size:16px;margin:0}
-.linkbtn{background:none;border:0;color:var(--a);font-size:12px}
-.apps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 8px}
-.appbtn{display:flex;align-items:center;flex-direction:column;gap:7px;border:0;background:none;min-width:0}
-.ico{width:clamp(48px,10vw,62px);height:clamp(48px,10vw,62px);border-radius:18px;border:1px solid #ffffff25;display:grid;place-items:center;font-size:24px;box-shadow:0 8px 25px #0002}
-.appname{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.dock{position:fixed;z-index:19;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:9px 12px;border-radius:24px;background:#101626b9;border:1px solid #ffffff22;backdrop-filter:blur(22px);max-width:96%}
-.dock .ico{width:45px;height:45px}
-.dock .appname{display:none}
-.pill{position:fixed;z-index:60;bottom:5px;left:50%;transform:translateX(-50%);width:90px;height:4px;border-radius:9px;background:#ffffffa6}
-#quick,#notifs{position:absolute;inset:0;z-index:40;overflow:auto;padding:20px 16px;background:#080c17d9;backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px)}
-.panelhead{display:flex;justify-content:space-between;align-items:center;margin:15px 2px 22px}
-.pclock{font-size:34px;font-weight:600}
-.close{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#ffffff10}
-.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.tile{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-height:88px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:18px;background:#ffffff0b}
-.tile.active{background:var(--a);color:#11182b;border-color:transparent}
-.tile .big{font-size:21px}
-.tile small{display:block;opacity:.75;margin-top:4px}
-.slider{border:1px solid var(--line);border-radius:18px;padding:15px;margin-top:11px;background:#ffffff0b}
-.sliderhead{display:flex;justify-content:space-between;font-size:12px;margin-bottom:12px}
-input[type=range]{width:100%;accent-color:var(--a)}
-.panelactions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.panelactions button{padding:13px 4px;border:1px solid var(--line);border-radius:14px;background:#ffffff0b;font-size:12px}
-.panelactions span{display:block;font-size:20px;margin-bottom:6px}
-.window{position:absolute;inset:0;z-index:35;overflow:auto;padding:52px 17px 35px;background:rgba(12,17,30,.96);backdrop-filter:blur(24px);animation:appear .15s ease}
-@keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}
-.whead{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-.back{width:39px;height:39px;border:1px solid var(--line);border-radius:13px;background:#ffffff0b;font-size:22px}
-.whead h1{font-size:23px;margin:0}
-.whead p{font-size:12px;color:var(--m);margin:4px 0 0}
-.card{margin-bottom:12px}
-.card h3{font-size:14px;margin:0 0 10px}
-.card p{font-size:12px;color:var(--m);line-height:1.55;margin:0}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #ffffff15}
-.row:last-child{border-bottom:0}
-.row strong{font-size:13px;font-weight:550}
-.row small{display:block;color:var(--m);font-size:11px;margin-top:4px}
-.switch{accent-color:var(--a);width:42px;height:23px}
-.field{width:100%;padding:12px;margin:6px 0 10px;border:1px solid var(--line);border-radius:12px;background:#070b15;color:var(--t);font-size:13px}
-.area{min-height:100px;resize:vertical}
-.btn{border:1px solid var(--line);border-radius:12px;background:#ffffff10;padding:10px 13px;font-size:12px;margin:3px 4px 3px 0}
-.primary{background:var(--a);color:#11182b;border-color:transparent;font-weight:650}
-.calcdisplay{text-align:right;font-size:31px;overflow-wrap:anywhere;padding:20px 12px;min-height:80px}
-.calcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.calcgrid button{padding:16px 3px;border:1px solid var(--line);border-radius:13px;background:#ffffff0b}
-.calcgrid .op{background:#83a9ff33}
-.noteitem{padding:12px;border:1px solid var(--line);border-radius:12px;margin:8px 0;font-size:12px;overflow-wrap:anywhere}
-.noteitem button{float:right;border:0;background:none;color:#ff9b9b}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center}
-.calendar div{padding:9px 0;border-radius:8px;background:#ffffff09;font-size:11px}
-.calendar .weekday{background:none;color:var(--m)}
-.calendar .today{background:var(--a);color:#11182b;font-weight:800}
-#toast{position:fixed;z-index:90;bottom:78px;left:50%;transform:translateX(-50%);padding:11px 16px;background:#f1f4ff;color:#11182b;border-radius:30px;font-size:12px;max-width:90%;text-align:center}
-body.light{--p:#f0f3fbd9;--t:#151b2d;--m:#606a82;--line:#18203a20;color-scheme:light}
-body.light #quick,body.light #notifs{background:#e9edf8ed}
-body.light .window{background:#edf1fbf5}
-body.light .field{background:#fff;color:#151b2d}
-body.light .appname{color:#151b2d}
-@media(min-width:700px){
-.screen{padding-left:clamp(30px,8vw,100px);padding-right:clamp(30px,8vw,100px)}
-.apps{grid-template-columns:repeat(6,minmax(0,1fr));gap:24px 15px}
-.widgets{max-width:650px}
-.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
-.window{padding-left:clamp(30px,12vw,150px);padding-right:clamp(30px,12vw,150px)}
-#quick,#notifs{padding-left:clamp(25px,10vw,120px);padding-right:clamp(25px,10vw,120px)}
+:root {
+  --accent: #83a9ff;
+  --background: #080c17;
+  --panel: rgba(23,30,49,.88);
+  --text: #f4f6ff;
+  --muted: #a4aec7;
+  --line: #ffffff20;
+  --brightness: 1;
 }
-@media(max-height:570px){
-.screen{padding-top:40px}
-.widgets{margin-bottom:12px}
-.widget{min-height:70px;padding:10px}
-.apps{gap:10px}
-.ico{width:43px;height:43px}
-.appname{font-size:10px}
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+button, input, textarea, select { font: inherit; }
+button { color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); }
+.hidden { display: none !important; }
+
+#wall {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, #344a8b99, transparent 45%),
+    radial-gradient(ellipse at 80% 80%, #653d9a77, transparent 42%),
+    linear-gradient(145deg, #101a32, #080c17);
+  filter: brightness(var(--brightness));
+}
+#app { position: relative; height: 100%; z-index: 1; }
+
+#status {
+  position: absolute;
+  z-index: 30;
+  top: 0; left: 0; right: 0;
+  height: 32px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  text-shadow: 0 1px 4px #000;
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 48px 18px 90px;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+
+#lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 30px;
+  background: transparent;
+}
+.clock {
+  font-size: clamp(65px, 15vw, 105px);
+  font-weight: 250;
+  letter-spacing: -5px;
+  line-height: 1;
+}
+.date { color: #d9e1fa; font-size: 14px; margin-top: 12px; }
+.unlock {
+  margin-top: 55px;
+  padding: 14px 25px;
+  border: 1px solid #ffffff45;
+  border-radius: 30px;
+  background: #ffffff15;
+  backdrop-filter: blur(15px);
+}
+.hint {
+  position: absolute;
+  bottom: 28px;
+  color: #ffffff99;
+  font-size: 12px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 2px 22px;
+}
+.eyebrow {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.title {
+  font-size: clamp(29px, 6vw, 42px);
+  font-weight: 650;
+  margin: 4px 0;
+}
+.muted { color: var(--muted); font-size: 12px; }
+.avatar {
+  width: 43px; height: 43px;
+  border: 0; border-radius: 15px;
+  background: linear-gradient(135deg, var(--accent), #9b7be8);
+  color: #11182b;
+  font-weight: 800;
+}
+.widgets {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.widget, .card {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #ffffff0a;
+  padding: 15px;
+}
+.widget { min-height: 94px; }
+.wval { font-size: 25px; margin-top: 7px; font-weight: 600; }
+.sect {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 2px 13px;
+}
+.sect h2 { font-size: 16px; margin: 0; }
+.linkbtn { background: none; border: 0; color: var(--accent); font-size: 12px; }
+
+.apps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px 8px;
+}
+.appbtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: none;
+  min-width: 0;
+}
+.ico {
+  width: clamp(48px, 10vw, 62px);
+  height: clamp(48px, 10vw, 62px);
+  border-radius: 18px;
+  border: 1px solid #ffffff25;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 8px 25px #0002;
+}
+.appname {
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.dock {
+  position: fixed;
+  z-index: 20;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 24px;
+  background: #101626e8;
+  border: 1px solid #ffffff22;
+  backdrop-filter: blur(22px);
+  max-width: 96%;
+}
+.dock .ico { width: 44px; height: 44px; }
+.dock .appname { display: none; }
+
+#pill {
+  position: fixed;
+  z-index: 60;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 4px;
+  border-radius: 9px;
+  background: #ffffffa6;
+  cursor: pointer;
+}
+
+#quick, #notifs {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  overflow-y: auto;
+  padding: 20px 16px;
+  background: #080c17f2;
+  backdrop-filter: blur(32px);
+}
+.panelhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 2px 22px;
+}
+.pclock { font-size: 34px; font-weight: 600; }
+.close {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #ffffff10;
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 88px;
+  text-align: left;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff0b;
+}
+.tile.active { background: var(--accent); color: #11182b; }
+.tile .big { font-size: 21px; }
+.tile small { display: block; opacity: .75; margin-top: 4px; }
+.slider {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 15px;
+  margin-top: 11px;
+  background: #ffffff0b;
+}
+.sliderhead {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.panelactions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.panelactions button {
+  padding: 13px 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff0b;
+  font-size: 12px;
+}
+.panelactions span { display: block; font-size: 20px; margin-bottom: 6px; }
+
+.window {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  overflow-y: auto;
+  padding: 52px 17px 45px;
+  background: rgba(12,17,30,.97);
+  backdrop-filter: blur(24px);
+}
+.whead { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.back {
+  width: 40px; height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #ffffff0b;
+  font-size: 22px;
+}
+.whead h1 { font-size: 23px; margin: 0; }
+.whead p { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.card { margin-bottom: 12px; }
+.card h3 { font-size: 14px; margin: 0 0 10px; }
+.card p { font-size: 12px; color: var(--muted); line-height: 1.55; margin: 0; }
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #ffffff15;
+}
+.row:last-child { border-bottom: 0; }
+.row strong { font-size: 13px; font-weight: 550; }
+.row small { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+.field {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #070b15;
+  color: var(--text);
+  font-size: 13px;
+}
+.area { min-height: 100px; resize: vertical; }
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff10;
+  padding: 10px 13px;
+  font-size: 12px;
+  margin: 3px 4px 3px 0;
+}
+.primary { background: var(--accent); color: #11182b; border-color: transparent; font-weight: 650; }
+.switch { width: 42px; height: 23px; accent-color: var(--accent); }
+.calcdisplay {
+  text-align: right;
+  font-size: 31px;
+  overflow-wrap: anywhere;
+  padding: 20px 12px;
+  min-height: 80px;
+}
+.calcgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.calcgrid button {
+  padding: 16px 3px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #ffffff0b;
+}
+.calcgrid .op { background: #83a9ff33; }
+.noteitem {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin: 8px 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.noteitem button { float: right; border: 0; background: none; color: #ff9b9b; }
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+.calendar div { padding: 9px 0; border-radius: 8px; background: #ffffff09; font-size: 11px; }
+.calendar .weekday { background: none; color: var(--muted); }
+.calendar .today { background: var(--accent); color: #11182b; font-weight: 800; }
+#toast {
+  position: fixed;
+  z-index: 90;
+  bottom: 78px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 11px 16px;
+  background: #f1f4ff;
+  color: #11182b;
+  border-radius: 30px;
+  font-size: 12px;
+  max-width: 90%;
+  text-align: center;
+}
+body.light { --panel: #f0f3fbd9; --text: #151b2d; --muted: #606a82; --line: #18203a20; }
+body.light #quick, body.light #notifs { background: #e9edf8f5; }
+body.light .window { background: #edf1fbfa; }
+body.light .field { background: #fff; color: #151b2d; }
+body.light .appname { color: #151b2d; }
+
+@media (min-width: 700px) {
+  .screen { padding-left: clamp(30px, 8vw, 100px); padding-right: clamp(30px, 8vw, 100px); }
+  .apps { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 24px 15px; }
+  .widgets { max-width: 650px; }
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .window { padding-left: clamp(30px, 12vw, 150px); padding-right: clamp(30px, 12vw, 150px); }
+}
+@media (max-height: 570px) {
+  .screen { padding-top: 40px; }
+  .widgets { margin-bottom: 12px; }
+  .widget { min-height: 70px; padding: 10px; }
+  .apps { gap: 10px; }
+  .ico { width: 43px; height: 43px; }
 }
 </style>
 </head>
+
 <body>
 <div id="wall"></div>
 <div id="app">
-<div id="status"><span id="statustime">09:41</span><span>▮▮▮ &nbsp;⌁ &nbsp;▰ <span id="battery">68%</span></span></div>
 
-<section id="lock" class="screen">
-<div class="clock" id="lockclock">09:41</div>
-<div class="date" id="lockdate"></div>
-<div style="margin-top:38px;color:#d7def2;font-size:14px">Un nouvel espace, à ton image.</div>
-<button class="unlock" id="unlock">Déverrouiller ↑</button>
-<div class="hint">LiquidOS · Appuie pour continuer</div>
-</section>
+  <div id="status">
+    <span id="statustime">09:41</span>
+    <span>▮▮▮ &nbsp;⌁ &nbsp;▰ <span id="battery">100%</span></span>
+  </div>
 
-<section id="home" class="screen hidden">
-<div class="head">
-<div><div class="eyebrow" id="homedate">BIENVENUE</div><div class="title">Bonjour<span style="color:var(--a)">.</span></div><div class="muted">Ton espace numérique, tout simplement.</div></div>
-<button class="avatar" data-app="settings">L</button>
-</div>
-<div class="widgets">
-<div class="widget glass"><div class="muted">Aujourd’hui</div><div class="wval" id="homeclock">09:41</div><div class="muted" id="homeyear">Prends ton temps.</div></div>
-<div class="widget glass"><div class="muted">LiquidOS</div><div class="wval">0.7</div><div class="muted">Interface expérimentale</div></div>
-</div>
-<div class="sect"><h2>Applications</h2><button class="linkbtn" id="allapps">Tout afficher</button></div>
-<div class="apps">
-<button class="appbtn" data-app="internet"><span class="ico" style="background:linear-gradient(145deg,#74c8ff,#5273e7)">🌐</span><span class="appname">Internet</span></button>
-<button class="appbtn" data-app="notes"><span class="ico" style="background:linear-gradient(145deg,#ffe28b,#e9a84f)">📝</span><span class="appname">Notes</span></button>
-<button class="appbtn" data-app="calculator"><span class="ico" style="background:linear-gradient(145deg,#c2b3ff,#8565dc)">🧮</span><span class="appname">Calculatrice</span></button>
-<button class="appbtn" data-app="calendar"><span class="ico" style="background:linear-gradient(145deg,#ff9b9b,#d84f6a)">📅</span><span class="appname">Calendrier</span></button>
-<button class="appbtn" data-app="assistant"><span class="ico" style="background:linear-gradient(145deg,#9af0dc,#3cae9c)">✦</span><span class="appname">Assistant</span></button>
-<button class="appbtn" data-app="media"><span class="ico" style="background:linear-gradient(145deg,#ffb2d5,#d75b9e)">▶</span><span class="appname">Médias</span></button>
-<button class="appbtn" data-app="settings"><span class="ico" style="background:linear-gradient(145deg,#c3d0e6,#7e8ba9)">⚙️</span><span class="appname">Paramètres</span></button>
-<button class="appbtn" data-app="about"><span class="ico" style="background:linear-gradient(145deg,#9cddff,#4d7acb)">ⓘ</span><span class="appname">À propos</span></button>
-</div>
-<div class="sect"><h2>Accès rapide</h2><button class="linkbtn" id="homequick">Centre de contrôle ↗</button></div>
-<div class="card"><h3>Personnalise ton espace</h3><p>Couleurs, fond d’écran et apparence.</p><button class="btn" data-app="settings" style="margin-top:12px">Ouvrir les paramètres</button></div>
-</section>
+  <section id="lock" class="screen">
+    <div class="clock" id="lockclock">09:41</div>
+    <div class="date" id="lockdate"></div>
+    <p style="margin-top:38px;color:#d7def2;font-size:14px">Un nouvel espace, à ton image.</p>
+    <button class="unlock" id="unlock" type="button">Déverrouiller ↑</button>
+    <div class="hint">LiquidOS · Appuie pour continuer</div>
+  </section>
 
-<div id="dock" class="dock hidden">
-<button class="appbtn" data-app="internet"><span class="ico" style="background:linear-gradient(145deg,#74c8ff,#5273e7)">🌐</span><span class="appname">Internet</span></button>
-<button class="appbtn" data-app="notes"><span class="ico" style="background:linear-gradient(145deg,#ffe28b,#e9a84f)">📝</span><span class="appname">Notes</span></button>
-<button class="appbtn" data-app="calculator"><span class="ico" style="background:linear-gradient(145deg,#c2b3ff,#8565dc)">🧮</span><span class="appname">Calculatrice</span></button>
-<button class="appbtn" data-app="settings"><span class="ico" style="background:linear-gradient(145deg,#c3d0e6,#7e8ba9)">⚙️</span><span class="appname">Paramètres</span></button>
-</div>
+  <section id="home" class="screen hidden">
+    <div class="head">
+      <div>
+        <div class="eyebrow" id="homedate">BIENVENUE</div>
+        <div class="title">Bonjour<span style="color:var(--accent)">.</span></div>
+        <div class="muted">Ton espace numérique, tout simplement.</div>
+      </div>
+      <button class="avatar" data-app="settings">L</button>
+    </div>
 
-<section id="quick" class="hidden">
-<div class="panelhead"><div><div class="pclock" id="quickclock">09:41</div><div class="muted" id="quickdate"></div></div><button class="close" id="quickclose">✕</button></div>
-<div class="tiles">
-<button class="tile" data-toggle="wifi"><span class="big">⌁</span><span>Wi-Fi<small id="statewifi">Désactivé</small></span></button>
-<button class="tile" data-toggle="bluetooth"><span class="big">ᛒ</span><span>Bluetooth<small id="statebluetooth">Désactivé</small></span></button>
-<button class="tile" data-toggle="airplane"><span class="big">✈</span><span>Mode avion<small id="stateairplane">Désactivé</small></span></button>
-<button class="tile" data-toggle="focus"><span class="big">◉</span><span>Concentration<small id="statefocus">Désactivée</small></span></button>
-<button class="tile" data-toggle="dark"><span class="big">☾</span><span>Mode sombre<small id="statedark">Activé</small></span></button>
-<button class="tile" data-toggle="notifications"><span class="big">♧</span><span>Notifications<small>Ouvrir le panneau</small></span></button>
-</div>
-<div class="slider"><div class="sliderhead"><span>☼ Luminosité visuelle</span><strong id="brightlabel">100%</strong></div><input type="range" id="bright" min="45" max="120" value="100"></div>
-<div class="slider"><div class="sliderhead"><span>Texte</span><strong id="sizelabel">100%</strong></div><input type="range" id="textsize" min="90" max="115" value="100"></div>
-<div class="panelactions"><button id="show-notifs"><span>♧</span>Notifications</button><button id="show-settings"><span>⚙</span>Paramètres</button><button id="lockbtn"><span>⌑</span>Verrouiller</button></div>
-<p class="muted" style="text-align:center;margin-top:18px">LiquidOS 0.7 · Interface web</p>
-</section>
+    <div class="widgets">
+      <div class="widget">
+        <div class="muted">Aujourd’hui</div>
+        <div class="wval" id="homeclock">09:41</div>
+        <div class="muted" id="homeyear"></div>
+      </div>
+      <div class="widget">
+        <div class="muted">LiquidOS</div>
+        <div class="wval">0.8</div>
+        <div class="muted">Interface expérimentale</div>
+      </div>
+    </div>
 
-<section id="notifs" class="hidden">
-<div class="panelhead"><div><div class="eyebrow">CENTRE DE NOTIFICATIONS</div><div style="font-size:27px;font-weight:650">Notifications</div></div><button class="close" id="notifclose">✕</button></div>
-<div id="notiflist">
-<div class="card"><div class="muted">✦ LiquidOS · À l’instant</div><h3 style="margin-top:10px">Bienvenue dans LiquidOS</h3><p>Ton interface est prête. Explore les applications et personnalise ton espace.</p></div>
-<div class="card"><div class="muted">⚙ Système · Aujourd’hui</div><h3 style="margin-top:10px">LiquidOS 0.7</h3><p>Le Centre de contrôle et les notifications ont été améliorés.</p></div>
-</div>
-<button class="btn" id="clear-notifs">Tout effacer</button><button class="btn primary" id="notifsettings">Paramètres</button>
-</section>
+    <div class="sect"><h2>Applications</h2><button class="linkbtn" id="allapps">Tout afficher</button></div>
+    <div class="apps">
+      <button class="appbtn" data-app="internet"><span class="ico" style="background:linear-gradient(145deg,#74c8ff,#5273e7)">🌐</span><span class="appname">Internet</span></button>
+      <button class="appbtn" data-app="notes"><span class="ico" style="background:linear-gradient(145deg,#ffe28b,#e9a84f)">📝</span><span class="appname">Notes</span></button>
+      <button class="appbtn" data-app="calculator"><span class="ico" style="background:linear-gradient(145deg,#c2b3ff,#8565dc)">🧮</span><span class="appname">Calculatrice</span></button>
+      <button class="appbtn" data-app="calendar"><span class="ico" style="background:linear-gradient(145deg,#ff9b9b,#d84f6a)">📅</span><span class="appname">Calendrier</span></button>
+      <button class="appbtn" data-app="assistant"><span class="ico" style="background:linear-gradient(145deg,#9af0dc,#3cae9c)">✦</span><span class="appname">Assistant</span></button>
+      <button class="appbtn" data-app="media"><span class="ico" style="background:linear-gradient(145deg,#ffb2d5,#d75b9e)">▶</span><span class="appname">Médias</span></button>
+      <button class="appbtn" data-app="settings"><span class="ico" style="background:linear-gradient(145deg,#c3d0e6,#7e8ba9)">⚙️</span><span class="appname">Paramètres</span></button>
+      <button class="appbtn" data-app="about"><span class="ico" style="background:linear-gradient(145deg,#9cddff,#4d7acb)">ⓘ</span><span class="appname">À propos</span></button>
+    </div>
 
-<div id="windows"></div>
-<div id="toast" class="hidden" role="status" aria-live="polite"></div>
-<div id="pill"></div>
+    <div class="sect"><h2>Accès rapide</h2><button class="linkbtn" id="homequick">Centre de contrôle ↗</button></div>
+    <div class="card">
+      <h3>Personnalise ton espace</h3>
+      <p>Couleurs, fond d’écran et apparence.</p>
+      <button class="btn" data-app="settings" style="margin-top:12px">Ouvrir les paramètres</button>
+    </div>
+  </section>
+
+  <div id="dock" class="dock hidden">
+    <button class="appbtn" data-app="internet"><span class="ico" style="background:linear-gradient(145deg,#74c8ff,#5273e7)">🌐</span></button>
+    <button class="appbtn" data-app="notes"><span class="ico" style="background:linear-gradient(145deg,#ffe28b,#e9a84f)">📝</span></button>
+    <button class="appbtn" data-app="calculator"><span class="ico" style="background:linear-gradient(145deg,#c2b3ff,#8565dc)">🧮</span></button>
+    <button class="appbtn" data-app="settings"><span class="ico" style="background:linear-gradient(145deg,#c3d0e6,#7e8ba9)">⚙️</span></button>
+  </div>
+
+  <section id="quick" class="hidden">
+    <div class="panelhead">
+      <div><div class="pclock" id="quickclock"></div><div class="muted" id="quickdate"></div></div>
+      <button class="close" id="quickclose">✕</button>
+    </div>
+    <div class="tiles">
+      <button class="tile" data-toggle="wifi"><span class="big">⌁</span><span>Wi-Fi<small id="statewifi">Désactivé</small></span></button>
+      <button class="tile" data-toggle="bluetooth"><span class="big">ᛒ</span><span>Bluetooth<small id="statebluetooth">Désactivé</small></span></button>
+      <button class="tile" data-toggle="airplane"><span class="big">✈</span><span>Mode avion<small id="stateairplane">Désactivé</small></span></button>
+      <button class="tile" data-toggle="focus"><span class="big">◉</span><span>Concentration<small id="statefocus">Désactivée</small></span></button>
+      <button class="tile" data-toggle="dark"><span class="big">☾</span><span>Mode sombre<small id="statedark">Activé</small></span></button>
+      <button class="tile" data-toggle="notifications"><span class="big">♧</span><span>Notifications<small>Ouvrir le panneau</small></span></button>
+    </div>
+    <div class="slider">
+      <div class="sliderhead"><span>☼ Luminosité visuelle</span><strong id="brightlabel">100%</strong></div>
+      <input type="range" id="bright" min="45" max="120" value="100">
+    </div>
+    <div class="slider">
+      <div class="sliderhead"><span>Taille du texte</span><strong id="sizelabel">100%</strong></div>
+      <input type="range" id="textsize" min="90" max="115" value="100">
+    </div>
+    <div class="panelactions">
+      <button id="show-notifs"><span>♧</span>Notifications</button>
+      <button id="show-settings"><span>⚙</span>Paramètres</button>
+      <button id="lockbtn"><span>⌑</span>Verrouiller</button>
+    </div>
+    <p class="muted" style="text-align:center;margin-top:18px">LiquidOS 0.8 · Interface web</p>
+  </section>
+
+  <section id="notifs" class="hidden">
+    <div class="panelhead">
+      <div><div class="eyebrow">CENTRE DE NOTIFICATIONS</div><div style="font-size:27px;font-weight:650">Notifications</div></div>
+      <button class="close" id="notifclose">✕</button>
+    </div>
+    <div id="notiflist">
+      <div class="card"><div class="muted">✦ LiquidOS · À l’instant</div><h3 style="margin-top:10px">Bienvenue dans LiquidOS</h3><p>Ton interface est prête. Explore les applications et personnalise ton espace.</p></div>
+    </div>
+    <button class="btn" id="clear-notifs">Tout effacer</button>
+    <button class="btn primary" id="notifsettings">Paramètres</button>
+  </section>
+
+  <div id="windows"></div>
+  <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+  <div id="pill" class="hidden"></div>
 </div>
 
 <script>
-(function(){
-"use strict";
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-const PREF="liquidos-preferences", NOTE="liquidos-notes";
-function get(k,d){try{let v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
-function put(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-let prefs=get(PREF,{}),unlocked=false,activeWindow="",toastTimer;
-let q={wifi:false,bluetooth:false,airplane:false,focus:false,dark:prefs.dark!==false};
-let brightness=Number(prefs.brightness)||100,size=Number(prefs.textSize)||100;
-function msg(s){let t=$("#toast");t.textContent=s;t.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),2200)}
-function date(d,opts){return new Intl.DateTimeFormat("fr-FR",opts).format(d)}
-function clock(){let d=new Date(),t=date(d,{hour:"2-digit",minute:"2-digit"}),ds=date(d,{weekday:"long",day:"numeric",month:"long"});$("#statustime").textContent=t;$("#lockclock").textContent=t;$("#homeclock").textContent=t;$("#quickclock").textContent=t;$("#lockdate").textContent=ds.charAt(0).toUpperCase()+ds.slice(1);$("#quickdate").textContent=$("#lockdate").textContent;$("#homedate").textContent=date(d,{weekday:"long",day:"numeric",month:"long"}).toUpperCase();$("#homeyear").textContent=date(d,{year:"numeric"})}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function save(){put(PREF,{accent:prefs.accent||"#83a9ff",wallpaper:prefs.wallpaper||"cosmic",dark:q.dark,showDate:prefs.showDate!==false,brightness:brightness,textSize:size})}
-function apply(){let accent=prefs.accent||"#83a9ff";document.documentElement.style.setProperty("--a",accent);let walls={cosmic:"radial-gradient(ellipse at 15% 15%,#344a8b99,transparent 45%),radial-gradient(ellipse at 80% 80%,#653d9a77,transparent 42%),linear-gradient(145deg,#101a32,#080c17)",ocean:"radial-gradient(ellipse at 20% 20%,#1ab1d088,transparent 44%),radial-gradient(ellipse at 80% 80%,#2049b477,transparent 42%),linear-gradient(145deg,#061b2b,#07101c)",sunset:"radial-gradient(ellipse at 20% 20%,#ff875c88,transparent 45%),radial-gradient(ellipse at 80% 75%,#aa439377,transparent 44%),linear-gradient(145deg,#28132c,#10101e)",forest:"radial-gradient(ellipse at 15% 15%,#50aa7d70,transparent 45%),radial-gradient(ellipse at 80% 80%,#2e666677,transparent 42%),linear-gradient(145deg,#10271f,#07110f)"};document.documentElement.style.setProperty("--wall",walls[prefs.wallpaper]||walls.cosmic);document.documentElement.style.setProperty("--bright",brightness/100);document.documentElement.style.fontSize=size+"%";document.body.classList.toggle("light",!q.dark);$("#bright").value=brightness;$("#brightlabel").textContent=brightness+"%";$("#textsize").value=size;$("#sizelabel").textContent=size+"%";$$("[data-toggle]").forEach(b=>b.classList.toggle("active",!!q[b.dataset.toggle]));["wifi","bluetooth","airplane","focus","dark"].forEach(k=>$("#state"+k).textContent=k==="dark"?(q.dark?"Activé":"Désactivé"):(q[k]?(k==="focus"?"Activée":"Activé"):(k==="focus"?"Désactivée":"Désactivé")))}
-function home(){unlocked=true;$("#lock").classList.add("hidden");$("#home").classList.remove("hidden");$("#dock").classList.remove("hidden");$("#pill").classList.remove("hidden");closePanels();closeWin()}
-function lock(){unlocked=false;$("#lock").classList.remove("hidden");$("#home").classList.add("hidden");$("#dock").classList.add("hidden");$("#pill").classList.add("hidden");closePanels();closeWin()}
-function closePanels(){$("#quick").classList.add("hidden");$("#notifs").classList.add("hidden")}
-function quick(){if(!unlocked)return;$("#notifs").classList.add("hidden");$("#quick").classList.remove("hidden")}
-function notifs(){if(!unlocked)return;$("#quick").classList.add("hidden");$("#notifs").classList.remove("hidden")}
-function closeWin(){activeWindow="";$("#windows").innerHTML=""}
-function shell(id,title,subtitle,body){closePanels();activeWindow=id;$("#windows").innerHTML='<section class="window"><div class="whead"><button class="back" id="winback">‹</button><div><h1>'+title+'</h1><p>'+subtitle+'</p></div></div>'+body+'</section>';$("#winback").onclick=closeWin}
-function download(name,content,type){let u=URL.createObjectURL(new Blob([content],{type:type||"text/plain"})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function app(name){if(!unlocked)home();closePanels();if(name==="settings"){settings();return}if(name==="notes"){notesApp();return}if(name==="calculator"){calculator();return}if(name==="internet"){internet();return}if(name==="calendar"){calendar();return}if(name==="assistant"){assistant();return}if(name==="media"){media();return}if(name==="about"){about();return}}
-function settings(){shell("settings","Paramètres","Personnalise LiquidOS",'<div class="card"><h3>Apparence</h3><div class="row"><div><strong>Mode sombre</strong><small>Modifier l’apparence</small></div><input class="switch" id="sdark" type="checkbox" '+(q.dark?"checked":"")+'></div><div class="row"><div><strong>Afficher la date</strong><small>Sur l’écran d’accueil</small></div><input class="switch" id="sdate" type="checkbox" '+(prefs.showDate!==false?"checked":"")+'></div><div class="row"><div><strong>Couleur d’accent</strong><small>Couleur des éléments actifs</small></div><input id="saccent" type="color" value="'+(prefs.accent||"#83a9ff")+'"></div><div class="row"><div><strong>Fond d’écran</strong><small>Ambiance visuelle</small></div><select class="field" id="swall" style="width:140px;margin:0"><option value="cosmic">Cosmique</option><option value="ocean">Océan</option><option value="sunset">Coucher de soleil</option><option value="forest">Forêt</option></select></div></div><div class="card"><h3>Interface</h3><p>La luminosité ci-dessous est un filtre visuel, pas le rétroéclairage Android.</p><input id="sbright" type="range" min="45" max="120" value="'+brightness+'" style="width:100%;margin-top:15px"></div><div class="card"><h3>Données locales</h3><p>Les notes et préférences sont conservées dans le navigateur de cet appareil.</p><button class="btn" id="exportprefs">Exporter les préférences</button><button class="btn" id="resetprefs">Réinitialiser l’apparence</button></div><div class="card"><p>Wi-Fi et Bluetooth ne sont pas contrôlables depuis cette page web.</p></div>');
-$("#swall").value=prefs.wallpaper||"cosmic";$("#sdark").onchange=function(){q.dark=this.checked;save();apply()};$("#sdate").onchange=function(){prefs.showDate=this.checked;$("#homedate").style.display=this.checked?"":"none";save()};$("#saccent").oninput=function(){prefs.accent=this.value;save();apply()};$("#swall").onchange=function(){prefs.wallpaper=this.value;save();apply()};$("#sbright").oninput=function(){brightness=+this.value;apply();save()};$("#exportprefs").onclick=()=>download("liquidos-preferences.json",JSON.stringify({prefs:prefs,dark:q.dark,brightness:brightness,textSize:size},null,2),"application/json");$("#resetprefs").onclick=()=>{prefs={};q.dark=true;brightness=100;size=100;save();apply();settings();msg("Apparence réinitialisée")}}
-function notesApp(){let n=get(NOTE,[]);if(!Array.isArray(n))n=[];shell("notes","Notes","Tes idées restent sur cet appareil",'<div class="card"><h3>Nouvelle note</h3><input class="field" id="ntitle" maxlength="90" placeholder="Titre de la note"><textarea class="field area" id="nbody" placeholder="Écris quelque chose…"></textarea><button class="btn primary" id="nsave">Enregistrer</button><button class="btn" id="nexport">Exporter les notes (.txt)</button></div><div class="sect"><h2>Mes notes</h2><span class="muted">'+n.length+' note(s)</span></div><div id="nlist"></div>');function render(){let d=get(NOTE,[]);if(!Array.isArray(d))d=[];$("#nlist").innerHTML=d.length?d.map((x,i)=>'<div class="noteitem"><button data-del="'+i+'">Supprimer ✕</button><strong>'+esc(x.title||"Sans titre")+'</strong><p style="margin-top:7px;white-space:pre-wrap">'+esc((x.body||"").slice(0,300))+'</p></div>').join(""):'<p class="muted" style="text-align:center;padding:25px">Aucune note pour le moment.</p>';$$("[data-del]").forEach(b=>b.onclick=()=>{let d=get(NOTE,[]);d.splice(+b.dataset.del,1);put(NOTE,d);render();msg("Note supprimée")})}$("#nsave").onclick=()=>{let title=$("#ntitle").value.trim(),body=$("#nbody").value.trim();if(!title&&!body){msg("Écris un titre ou un texte");return}let d=get(NOTE,[]);if(!Array.isArray(d))d=[];d.unshift({title:title||"Sans titre",body:body,date:new Date().toISOString()});put(NOTE,d);$("#ntitle").value="";$("#nbody").value="";render();msg("Note enregistrée")};$("#nexport").onclick=()=>{let d=get(NOTE,[]);download("liquidos-notes.txt",d.map(x=>(x.title||"Sans titre")+"\n"+(x.date||"")+"\n"+(x.body||"")+"\n\n---\n").join("\n")||"Aucune note.","text/plain;charset=utf-8")};render()}
-function calculator(){shell("calc","Calculatrice","Opérations rapides",'<div class="card"><div class="calcdisplay" id="cd">0</div><div class="calcgrid">'+["AC","±","%","÷","7","8","9","×","4","5","6","−","1","2","3","+","⌫","0",".","="].map(x=>'<button class="'+(["÷","×","−","+","="].includes(x)?"op":"")+'" data-c="'+x+'">'+x+"</button>").join("")+"</div></div>");let exp="";function display(x){$("#cd").textContent=x||"0"}$$("[data-c]").forEach(b=>b.onclick=()=>{let x=b.dataset.c;if(x==="AC"){exp="";display("0");return}if(x==="⌫"){exp=exp.slice(0,-1);display(exp);return}if(x==="±"){exp=exp[0]==="-"?exp.slice(1):"-"+exp;display(exp);return}if(x==="%"){exp=String(Number(exp)/100);display(exp);return}if(x==="="){try{let safe=exp.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-");if(!/^[0-9+\-*/.() ]+$/.test(safe))throw 0;let v=Function('"use strict";return ('+safe+")")();if(!Number.isFinite(v))throw 0;exp=String(Math.round((v+Number.EPSILON)*1e10)/1e10);display(exp)}catch(e){exp="";display("Erreur")}return}exp+=({"×":"*","÷":"/","−":"-"}[x]||x);display(exp)})}
-function internet(){shell("internet","Internet","Recherche sur le Web",'<div style="text-align:center;padding:25px 0"><div style="font-size:31px;font-weight:750">liquid<span style="color:var(--a)">search</span></div><p class="muted">Recherche sur le Web</p></div><form id="searchform"><input class="field" id="query" placeholder="Que souhaites-tu rechercher ?"><button class="btn primary">Rechercher</button></form><div class="card"><h3>Navigation</h3><p>Les résultats s’ouvrent dans le navigateur. Cette interface ne filtre pas automatiquement les sites et ne remplace pas un contrôle parental.</p></div><div id="results"></div>');$("#searchform").onsubmit=e=>{e.preventDefault();let q=$("#query").value.trim();if(!q)return;let url="https://www.google.com/search?q="+encodeURIComponent(q);$("#results").innerHTML='<div class="card"><h3>Recherche : '+esc(q)+'</h3><button class="btn primary" id="goresult">Ouvrir les résultats ↗</button></div>';$("#goresult").onclick=()=>{let w=window.open(url,"_blank");if(!w)location.href=url}}}
-function calendar(){let d=new Date(),first=new Date(d.getFullYear(),d.getMonth(),1),days=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),off=(first.getDay()+6)%7,cells=["L","M","M","J","V","S","D"].map(x=>'<div class="weekday">'+x+"</div>").join("");for(let i=0;i<off;i++)cells+="<div></div>";for(let i=1;i<=days;i++)cells+='<div class="'+(i===d.getDate()?"today":"")+'">'+i+"</div>";shell("calendar","Calendrier","Ton mois en un coup d’œil",'<div class="card"><h3>'+date(d,{month:"long",year:"numeric"})+'</h3><div class="calendar">'+cells+'</div></div><div class="card"><h3>Aujourd’hui</h3><p>'+date(d,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p><p style="margin-top:8px">Calendrier local de démonstration ; aucun compte externe n’est synchronisé.</p></div>')}
-function assistant(){shell("assistant","Assistant","Aide rapide",'<div class="card" style="text-align:center;padding:25px"><div style="font-size:38px;color:var(--a)">✦</div><h3>Assistant LiquidOS</h3><p>Version de démonstration locale.</p></div><div class="card"><input class="field" id="ask" placeholder="Écris une question…"><button class="btn primary" id="askbtn">Envoyer</button><p id="answer" style="margin-top:12px"></p></div><div class="card"><p>Cette version ne se connecte pas à un service d’intelligence artificielle.</p></div>');function answer(){let q=$("#ask").value.toLowerCase(),a="Je suis encore une version de démonstration. Essaie « paramètres », « notes », « heure » ou « Wi-Fi ».";if(q.includes("heure"))a="Il est "+date(new Date(),{hour:"2-digit",minute:"2-digit"})+" sur cette tablette.";else if(q.includes("note"))a="Ouvre Notes pour enregistrer tes idées dans le navigateur.";else if(q.includes("param"))a="Ouvre Paramètres pour changer la couleur, le fond et le mode sombre.";else if(q.includes("wifi")||q.includes("bluetooth"))a="Ces boutons sont visuels et ne changent pas les réglages Android.";$("#answer").textContent=a}$("#askbtn").onclick=answer;$("#ask").onkeydown=e=>{if(e.key==="Enter")answer()}}
-function media(){shell("media","Médias","Lecture de fichiers locaux",'<div class="card"><h3>Choisir un fichier audio ou vidéo</h3><p>Le fichier est lu localement dans le navigateur.</p><input class="field" id="mediafile" type="file" accept="audio/*,video/*"><div id="player"></div></div>');$("#mediafile").onchange=function(){let f=this.files&&this.files[0];if(!f)return;let u=URL.createObjectURL(f),tag=f.type.startsWith("video/")?"video":"audio";$("#player").innerHTML="<"+tag+' controls style="width:100%;max-height:40vh;margin-top:12px"></'+tag+'><p class="muted">'+esc(f.name)+"</p>";$("#player "+tag).src=u}}
-function about(){shell("about","À propos","Informations du projet",'<div class="card" style="text-align:center;padding:25px"><div style="font-size:42px;color:var(--a)">◈</div><h3 style="font-size:22px">LiquidOS 0.7</h3><p>Interface web expérimentale</p></div><div class="card"><div class="row"><strong>Plateforme</strong><span>Web / PWA</span></div><div class="row"><strong>Compatibilité visée</strong><span>Android 8.1+</span></div></div><div class="card"><h3>À savoir</h3><p>LiquidOS simule certains éléments d’un système d’exploitation. Les applications, notes et préférences fonctionnent dans le navigateur. Le contrôle réel du Wi-Fi, du Bluetooth et de la luminosité nécessite une application native ou des permissions spécifiques.</p></div>")}
-function toggle(k){if(k==="notifications"){notifs();return}q[k]=!q[k];if(k==="airplane"&&q.airplane){q.wifi=false;q.bluetooth=false}if((k==="wifi"||k==="bluetooth")&&q.airplane)q.airplane=false;apply();save();if(["wifi","bluetooth","airplane"].includes(k))msg("Simulation visuelle : le réglage Android n’a pas été modifié.")}
-$("#unlock").onclick=home;
-$("#lock").onclick=e=>{if(e.target===$("#lock"))home()};
-$("#status").onclick=quick;
-$("#quickclose").onclick=()=>$("#quick").classList.add("hidden");
-$("#pill").onclick=()=>{if(activeWindow)closeWin();else closePanels()};
-$("#homequick").onclick=quick;
-$("#allapps").onclick=()=>msg("Toutes les applications sont affichées");
-$$("[data-app]").forEach(b=>b.addEventListener("click",()=>app(b.dataset.app)));
-$$("[data-toggle]").forEach(b=>b.addEventListener("click",()=>toggle(b.dataset.toggle)));
-$("#bright").oninput=function(){brightness=+this.value;$("#brightlabel").textContent=brightness+"%";document.documentElement.style.setProperty("--bright",brightness/100);save()};
-$("#textsize").oninput=function(){size=+this.value;$("#sizelabel").textContent=size+"%";document.documentElement.style.fontSize=size+"%";save()};
-$("#show-notifs").onclick=notifs;
-$("#show-settings").onclick=()=>app("settings");
-$("#lockbtn").onclick=lock;
-$("#notifclose").onclick=()=>$("#notifs").classList.add("hidden");
-$("#clear-notifs").onclick=()=>{$("#notiflist").innerHTML='<div class="card"><p>Aucune notification.</p></div>';msg("Notifications effacées")};
-$("#notifsettings").onclick=()=>app("settings");
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeWin();closePanels();if(!unlocked)home()}});
-let sy=0,sx=0;
-document.addEventListener("touchstart",e=>{if(e.touches[0]){sy=e.touches[0].clientY;sx=e.touches[0].clientX}},{passive:true});
-document.addEventListener("touchend",e=>{if(!e.changedTouches[0])return;let dy=e.changedTouches[0].clientY-sy,dx=Math.abs(e.changedTouches[0].clientX-sx);if(sy<28&&dy>70&&dx<70&&unlocked&&!activeWindow)quick()},{passive:true});
-q.dark=prefs.dark!==false;
-if(prefs.showDate===false)$("#homedate").style.display="none";
-apply();clock();setInterval(clock,15000);
-if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+(function () {
+  "use strict";
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const PREF = "liquidos-preferences";
+  const NOTE = "liquidos-notes";
+
+  function read(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : JSON.parse(value);
+    } catch (_) {
+      return fallback;
+    }
+  }
+
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); }
+    catch (_) { showMessage("Stockage indisponible dans ce navigateur."); }
+  }
+
+  let prefs = read(PREF, {});
+  let unlocked = false;
+  let activeWindow = "";
+  let toastTimer = null;
+  let brightness = Number(prefs.brightness) || 100;
+  let textSize = Number(prefs.textSize) || 100;
+
+  let toggles = {
+    wifi: false,
+    bluetooth: false,
+    airplane: false,
+    focus: false,
+    dark: prefs.dark !== false
+  };
+
+  function showMessage(message) {
+    const toast = $("#toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add("hidden"), 2400);
+  }
+
+  function formatDate(date, options) {
+    return new Intl.DateTimeFormat("fr-FR", options).format(date);
+  }
+
+  function updateClock() {
+    const now = new Date();
+    const time = formatDate(now, {hour:"2-digit", minute:"2-digit"});
+    const date = formatDate(now, {weekday:"long", day:"numeric", month:"long"});
+    $("#statustime").textContent = time;
+    $("#lockclock").textContent = time;
+    $("#homeclock").textContent = time;
+    $("#quickclock").textContent = time;
+    $("#lockdate").textContent = date.charAt(0).toUpperCase() + date.slice(1);
+    $("#quickdate").textContent = $("#lockdate").textContent;
+    $("#homedate").textContent = date.toUpperCase();
+    $("#homeyear").textContent = formatDate(now, {year:"numeric"});
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[char]);
+  }
+
+  function savePreferences() {
+    write(PREF, {
+      accent: prefs.accent || "#83a9ff",
+      wallpaper: prefs.wallpaper || "cosmic",
+      dark: toggles.dark,
+      showDate: prefs.showDate !== false,
+      brightness,
+      textSize
+    });
+  }
+
+  function applyPreferences() {
+    const accent = prefs.accent || "#83a9ff";
+    document.documentElement.style.setProperty("--accent", accent);
+    document.documentElement.style.setProperty("--brightness", brightness / 100);
+    document.documentElement.style.fontSize = textSize + "%";
+
+    const wallpapers = {
+      cosmic: "radial-gradient(ellipse at 15% 15%,#344a8b99,transparent 45%),radial-gradient(ellipse at 80% 80%,#653d9a77,transparent 42%),linear-gradient(145deg,#101a32,#080c17)",
+      ocean: "radial-gradient(ellipse at 20% 20%,#1ab1d088,transparent 44%),radial-gradient(ellipse at 80% 80%,#2049b477,transparent 42%),linear-gradient(145deg,#061b2b,#07101c)",
+      sunset: "radial-gradient(ellipse at 20% 20%,#ff875c88,transparent 45%),radial-gradient(ellipse at 80% 75%,#aa439377,transparent 44%),linear-gradient(145deg,#28132c,#10101e)",
+      forest: "radial-gradient(ellipse at 15% 15%,#50aa7d70,transparent 45%),radial-gradient(ellipse at 80% 80%,#2e666677,transparent 42%),linear-gradient(145deg,#10271f,#07110f)"
+    };
+
+    $("#wall").style.background = wallpapers[prefs.wallpaper] || wallpapers.cosmic;
+    document.body.classList.toggle("light", !toggles.dark);
+    $("#bright").value = brightness;
+    $("#brightlabel").textContent = brightness + "%";
+    $("#textsize").value = textSize;
+    $("#sizelabel").textContent = textSize + "%";
+    $("#homedate").style.display = prefs.showDate === false ? "none" : "";
+
+    $$("[data-toggle]").forEach(button => {
+      button.classList.toggle("active", !!toggles[button.dataset.toggle]);
+    });
+
+    ["wifi","bluetooth","airplane","focus","dark"].forEach(key => {
+      const label = $("#state" + key);
+      if (!label) return;
+      if (key === "dark") label.textContent = toggles.dark ? "Activé" : "Désactivé";
+      else if (key === "focus") label.textContent = toggles[key] ? "Activée" : "Désactivée";
+      else label.textContent = toggles[key] ? "Activé" : "Désactivé";
+    });
+  }
+
+  function closePanels() {
+    $("#quick").classList.add("hidden");
+    $("#notifs").classList.add("hidden");
+  }
+
+  function closeWindow() {
+    activeWindow = "";
+    $("#windows").innerHTML = "";
+  }
+
+  // Déverrouillage centralisé : le bouton et le geste utilisent la même fonction.
+  function unlockDevice() {
+    unlocked = true;
+    $("#lock").classList.add("hidden");
+    $("#home").classList.remove("hidden");
+    $("#dock").classList.remove("hidden");
+    $("#pill").classList.remove("hidden");
+    closePanels();
+    closeWindow();
+  }
+
+  function lockDevice() {
+    unlocked = false;
+    closePanels();
+    closeWindow();
+    $("#home").classList.add("hidden");
+    $("#dock").classList.add("hidden");
+    $("#pill").classList.add("hidden");
+    $("#lock").classList.remove("hidden");
+  }
+
+  function openQuick() {
+    if (!unlocked) return;
+    $("#notifs").classList.add("hidden");
+    $("#quick").classList.remove("hidden");
+  }
+
+  function openNotifications() {
+    if (!unlocked) return;
+    $("#quick").classList.add("hidden");
+    $("#notifs").classList.remove("hidden");
+  }
+
+  function openWindow(title, subtitle, content) {
+    closePanels();
+    activeWindow = title;
+    $("#windows").innerHTML =
+      '<section class="window">' +
+        '<div class="whead">' +
+          '<button class="back" id="winback" aria-label="Retour">‹</button>' +
+          '<div><h1>' + escapeHTML(title) + '</h1><p>' + escapeHTML(subtitle) + '</p></div>' +
+        '</div>' + content +
+      '</section>';
+    $("#winback").onclick = closeWindow;
+  }
+
+  function downloadFile(filename, content, type) {
+    const url = URL.createObjectURL(new Blob([content], {type:type || "text/plain"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function openApp(name) {
+    if (!unlocked) unlockDevice();
+    closePanels();
+
+    if (name === "settings") return settingsApp();
+    if (name === "notes") return notesApp();
+    if (name === "calculator") return calculatorApp();
+    if (name === "internet") return internetApp();
+    if (name === "calendar") return calendarApp();
+    if (name === "assistant") return assistantApp();
+    if (name === "media") return mediaApp();
+    if (name === "about") return aboutApp();
+  }
+
+  function settingsApp() {
+    openWindow("Paramètres", "Personnalise LiquidOS",
+      '<div class="card"><h3>Apparence</h3>' +
+      '<div class="row"><div><strong>Mode sombre</strong><small>Modifier l’apparence</small></div><input class="switch" id="sdark" type="checkbox" ' + (toggles.dark ? "checked" : "") + '></div>' +
+      '<div class="row"><div><strong>Afficher la date</strong><small>Sur l’accueil</small></div><input class="switch" id="sdate" type="checkbox" ' + (prefs.showDate !== false ? "checked" : "") + '></div>' +
+      '<div class="row"><div><strong>Couleur d’accent</strong></div><input id="saccent" type="color" value="' + (prefs.accent || "#83a9ff") + '"></div>' +
+      '<div class="row"><div><strong>Fond d’écran</strong></div><select class="field" id="swall" style="width:140px;margin:0"><option value="cosmic">Cosmique</option><option value="ocean">Océan</option><option value="sunset">Coucher de soleil</option><option value="forest">Forêt</option></select></div></div>' +
+      '<div class="card"><h3>Luminosité visuelle</h3><p>Modifie l’apparence de LiquidOS, pas le rétroéclairage de la tablette.</p><input id="sbright" type="range" min="45" max="120" value="' + brightness + '" style="width:100%"></div>' +
+      '<div class="card"><h3>Données locales</h3><p>Les notes et préférences sont conservées dans le navigateur de cet appareil.</p><button class="btn" id="exportprefs">Exporter les préférences</button><button class="btn" id="resetprefs">Réinitialiser l’apparence</button></div>' +
+      '<div class="card"><p>Le Wi-Fi et le Bluetooth ne peuvent pas être commandés par cette page web.</p></div>'
+    );
+
+    $("#swall").value = prefs.wallpaper || "cosmic";
+    $("#sdark").onchange = function() { toggles.dark = this.checked; savePreferences(); applyPreferences(); };
+    $("#sdate").onchange = function() { prefs.showDate = this.checked; savePreferences(); applyPreferences(); };
+    $("#saccent").oninput = function() { prefs.accent = this.value; savePreferences(); applyPreferences(); };
+    $("#swall").onchange = function() { prefs.wallpaper = this.value; savePreferences(); applyPreferences(); };
+    $("#sbright").oninput = function() { brightness = Number(this.value); savePreferences(); applyPreferences(); };
+
+    $("#exportprefs").onclick = () => downloadFile(
+      "liquidos-preferences.json",
+      JSON.stringify({prefs, toggles, brightness, textSize}, null, 2),
+      "application/json"
+    );
+
+    $("#resetprefs").onclick = () => {
+      prefs = {};
+      toggles.dark = true;
+      brightness = 100;
+      textSize = 100;
+      savePreferences();
+      applyPreferences();
+      settingsApp();
+      showMessage("Apparence réinitialisée");
+    };
+  }
+
+  function notesApp() {
+    let notes = read(NOTE, []);
+    if (!Array.isArray(notes)) notes = [];
+
+    openWindow("Notes", "Tes idées restent sur cet appareil",
+      '<div class="card"><h3>Nouvelle note</h3>' +
+      '<input class="field" id="ntitle" maxlength="90" placeholder="Titre de la note">' +
+      '<textarea class="field area" id="nbody" placeholder="Écris quelque chose…"></textarea>' +
+      '<button class="btn primary" id="nsave">Enregistrer</button>' +
+      '<button class="btn" id="nexport">Exporter les notes (.txt)</button></div>' +
+      '<div class="sect"><h2>Mes notes</h2><span class="muted">' + notes.length + ' note(s)</span></div><div id="nlist"></div>'
+    );
+
+    function renderNotes() {
+      let data = read(NOTE, []);
+      if (!Array.isArray(data)) data = [];
+      $("#nlist").innerHTML = data.length
+        ? data.map((note, i) =>
+          '<div class="noteitem"><button data-del="' + i + '">Supprimer ✕</button><strong>' +
+          escapeHTML(note.title || "Sans titre") + '</strong><p style="margin-top:7px;white-space:pre-wrap">' +
+          escapeHTML((note.body || "").slice(0, 300)) + '</p></div>'
+        ).join("")
+        : '<p class="muted" style="text-align:center;padding:25px">Aucune note pour le moment.</p>';
+
+      $$("[data-del]").forEach(button => {
+        button.onclick = () => {
+          const list = read(NOTE, []);
+          if (!Array.isArray(list)) return;
+          list.splice(Number(button.dataset.del), 1);
+          write(NOTE, list);
+          renderNotes();
+          showMessage("Note supprimée");
+        };
+      });
+    }
+
+    $("#nsave").onclick = () => {
+      const title = $("#ntitle").value.trim();
+      const body = $("#nbody").value.trim();
+      if (!title && !body) return showMessage("Écris un titre ou un texte");
+
+      let list = read(NOTE, []);
+      if (!Array.isArray(list)) list = [];
+      list.unshift({title:title || "Sans titre", body, date:new Date().toISOString()});
+      write(NOTE, list);
+      $("#ntitle").value = "";
+      $("#nbody").value = "";
+      renderNotes();
+      showMessage("Note enregistrée");
+    };
+
+    $("#nexport").onclick = () => {
+      const list = read(NOTE, []);
+      downloadFile("liquidos-notes.txt",
+        (Array.isArray(list) ? list : []).map(n =>
+          (n.title || "Sans titre") + "\n" + (n.date || "") + "\n" + (n.body || "") + "\n\n---\n"
+        ).join("\n") || "Aucune note.",
+        "text/plain;charset=utf-8"
+      );
+    };
+
+    renderNotes();
+  }
+
+  function calculatorApp() {
+    openWindow("Calculatrice", "Opérations rapides",
+      '<div class="card"><div class="calcdisplay" id="cd">0</div><div class="calcgrid">' +
+      ["AC","±","%","÷","7","8","9","×","4","5","6","−","1","2","3","+","⌫","0",".","="]
+      .map(x => '<button class="' + (["÷","×","−","+","="].includes(x) ? "op" : "") + '" data-c="' + x + '">' + x + '</button>')
+      .join("") + '</div></div>'
+    );
+
+    let expression = "";
+
+    function display(value) { $("#cd").textContent = value || "0"; }
+
+    $$("[data-c]").forEach(button => {
+      button.onclick = () => {
+        const key = button.dataset.c;
+
+        if (key === "AC") { expression = ""; display("0"); return; }
+        if (key === "⌫") { expression = expression.slice(0, -1); display(expression); return; }
+        if (key === "±") {
+          expression = expression.startsWith("-") ? expression.slice(1) : "-" + expression;
+          display(expression); return;
+        }
+        if (key === "%") {
+          const value = Number(expression);
+          if (Number.isFinite(value)) expression = String(value / 100);
+          display(expression); return;
+        }
+        if (key === "=") {
+          const safe = expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-");
+          if (!/^[0-9+\-*/.() ]+$/.test(safe)) { expression = ""; display("Erreur"); return; }
+          try {
+            const value = Function('"use strict";return (' + safe + ')')();
+            if (!Number.isFinite(value)) throw new Error("invalid");
+            expression = String(Math.round((value + Number.EPSILON) * 1e10) / 1e10);
+            display(expression);
+          } catch (_) { expression = ""; display("Erreur"); }
+          return;
+        }
+        expression += ({"×":"*", "÷":"/", "−":"-"}[key] || key);
+        display(expression);
+      };
+    });
+  }
+
+  function internetApp() {
+    openWindow("Internet", "Recherche sur le Web",
+      '<div style="text-align:center;padding:25px 0"><div style="font-size:31px;font-weight:750">liquid<span style="color:var(--accent)">search</span></div><p class="muted">Recherche sur le Web</p></div>' +
+      '<form id="searchform"><input class="field" id="query" placeholder="Que souhaites-tu rechercher ?"><button class="btn primary">Rechercher</button></form>' +
+      '<div class="card"><p>Les résultats s’ouvrent dans le navigateur. Cette interface ne filtre pas automatiquement les sites.</p></div><div id="results"></div>'
+    );
+
+    $("#searchform").onsubmit = event => {
+      event.preventDefault();
+      const query = $("#query").value.trim();
+      if (!query) return;
+      const url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+      $("#results").innerHTML =
+        '<div class="card"><h3>Recherche : ' + escapeHTML(query) + '</h3><button class="btn primary" id="goresult">Ouvrir les résultats ↗</button></div>';
+      $("#goresult").onclick = () => {
+        const tab = window.open(url, "_blank");
+        if (!tab) window.location.href = url;
+      };
+    };
+  }
+
+  function calendarApp() {
+    const now = new Date();
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    const total = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const offset = (first.getDay() + 6) % 7;
+    let cells = ["L","M","M","J","V","S","D"]
+      .map(day => '<div class="weekday">' + day + '</div>').join("");
+
+    for (let i = 0; i < offset; i++) cells += "<div></div>";
+    for (let day = 1; day <= total; day++) {
+      cells += '<div class="' + (day === now.getDate() ? "today" : "") + '">' + day + '</div>';
+    }
+
+    openWindow("Calendrier", "Ton mois en un coup d’œil",
+      '<div class="card"><h3>' + escapeHTML(formatDate(now, {month:"long",year:"numeric"})) + '</h3><div class="calendar">' + cells + '</div></div>' +
+      '<div class="card"><h3>Aujourd’hui</h3><p>' + escapeHTML(formatDate(now, {weekday:"long",day:"numeric",month:"long",year:"numeric"})) + '</p></div>'
+    );
+  }
+
+  function assistantApp() {
+    openWindow("Assistant", "Aide rapide",
+      '<div class="card" style="text-align:center;padding:25px"><div style="font-size:38px;color:var(--accent)">✦</div><h3>Assistant LiquidOS</h3><p>Version de démonstration locale.</p></div>' +
+      '<div class="card"><input class="field" id="ask" placeholder="Écris une question…"><button class="btn primary" id="askbtn">Envoyer</button><p id="answer" style="margin-top:12px"></p></div>'
+    );
+
+    function answer() {
+      const query = $("#ask").value.toLowerCase();
+      let answerText = "Je suis encore une version de démonstration. Essaie « paramètres », « notes », « heure » ou « Wi-Fi ».";
+
+      if (query.includes("heure")) answerText = "Il est " + formatDate(new Date(), {hour:"2-digit",minute:"2-digit"}) + ".";
+      else if (query.includes("note")) answerText = "Ouvre Notes pour enregistrer tes idées.";
+      else if (query.includes("param")) answerText = "Ouvre Paramètres pour modifier l'apparence.";
+      else if (query.includes("wifi") || query.includes("bluetooth")) answerText = "Ces boutons sont visuels et ne changent pas les réglages Android.";
+
+      $("#answer").textContent = answerText;
+    }
+
+    $("#askbtn").onclick = answer;
+    $("#ask").onkeydown = event => { if (event.key === "Enter") answer(); };
+  }
+
+  function mediaApp() {
+    openWindow("Médias", "Lecture de fichiers locaux",
+      '<div class="card"><h3>Choisir un fichier audio ou vidéo</h3><p>Lecture locale dans le navigateur.</p><input class="field" id="mediafile" type="file" accept="audio/*,video/*"><div id="player"></div></div>'
+    );
+
+    $("#mediafile").onchange = function() {
+      const file = this.files && this.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      const tag = file.type.startsWith("video/") ? "video" : "audio";
+      $("#player").innerHTML = '<' + tag + ' controls style="width:100%;max-height:40vh;margin-top:12px"></' + tag + '><p class="muted">' + escapeHTML(file.name) + '</p>';
+      $("#player " + tag).src = url;
+    };
+  }
+
+  function aboutApp() {
+    openWindow("À propos", "Informations du projet",
+      '<div class="card" style="text-align:center;padding:25px"><div style="font-size:42px;color:var(--accent)">◈</div><h3 style="font-size:22px">LiquidOS 0.8</h3><p>Interface web expérimentale</p></div>' +
+      '<div class="card"><div class="row"><strong>Plateforme</strong><span>Web / PWA</span></div><div class="row"><strong>Compatibilité visée</strong><span>Android 8.1+</span></div></div>' +
+      '<div class="card"><h3>À savoir</h3><p>LiquidOS simule une interface de système d’exploitation. Le contrôle réel du Wi-Fi, du Bluetooth et de la luminosité nécessite une application native ou des permissions spécifiques.</p></div>'
+    );
+  }
+
+  function toggleSetting(key) {
+    if (key === "notifications") { openNotifications(); return; }
+
+    toggles[key] = !toggles[key];
+
+    if (key === "airplane" && toggles.airplane) {
+      toggles.wifi = false;
+      toggles.bluetooth = false;
+    }
+    if ((key === "wifi" || key === "bluetooth") && toggles[key]) {
+      toggles.airplane = false;
+    }
+
+    applyPreferences();
+    savePreferences();
+
+    if (["wifi","bluetooth","airplane"].includes(key)) {
+      showMessage("Simulation visuelle : réglage Android inchangé.");
+    }
+  }
+
+  // Bouton de déverrouillage : événement explicite et fonction unique.
+  $("#unlock").addEventListener("click", function(event) {
+    event.preventDefault();
+    unlockDevice();
+  });
+
+  // Toucher le fond de l'écran verrouillé fonctionne aussi.
+  $("#lock").addEventListener("click", function(event) {
+    if (event.target === $("#lock")) unlockDevice();
+  });
+
+  $("#status").addEventListener("click", openQuick);
+  $("#quickclose").onclick = () => $("#quick").classList.add("hidden");
+  $("#notifclose").onclick = () => $("#notifs").classList.add("hidden");
+  $("#homequick").onclick = openQuick;
+  $("#show-notifs").onclick = openNotifications;
+  $("#show-settings").onclick = () => openApp("settings");
+  $("#lockbtn").onclick = lockDevice;
+
+  $("#pill").onclick = () => {
+    if (activeWindow) closeWindow();
+    else closePanels();
+  };
+
+  $("#allapps").onclick = () => showMessage("Toutes les applications sont affichées.");
+
+  $$("[data-app]").forEach(button => {
+    button.addEventListener("click", () => openApp(button.dataset.app));
+  });
+
+  $$("[data-toggle]").forEach(button => {
+    button.addEventListener("click", () => toggleSetting(button.dataset.toggle));
+  });
+
+  $("#bright").oninput = function() {
+    brightness = Number(this.value);
+    $("#brightlabel").textContent = brightness + "%";
+    document.documentElement.style.setProperty("--brightness", brightness / 100);
+    savePreferences();
+  };
+
+  $("#textsize").oninput = function() {
+    textSize = Number(this.value);
+    $("#sizelabel").textContent = textSize + "%";
+    document.documentElement.style.fontSize = textSize + "%";
+    savePreferences();
+  };
+
+  $("#clear-notifs").onclick = () => {
+    $("#notiflist").innerHTML = '<div class="card"><p>Aucune notification.</p></div>';
+    showMessage("Notifications effacées");
+  };
+
+  $("#notifsettings").onclick = () => openApp("settings");
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      if (!unlocked) unlockDevice();
+      else if (activeWindow) closeWindow();
+      else closePanels();
+    }
+  });
+
+  let startY = 0;
+  let startX = 0;
+
+  document.addEventListener("touchstart", event => {
+    if (event.touches[0]) {
+      startY = event.touches[0].clientY;
+      startX = event.touches[0].clientX;
+    }
+  }, {passive:true});
+
+  document.addEventListener("touchend", event => {
+    if (!event.changedTouches[0]) return;
+    const dy = event.changedTouches[0].clientY - startY;
+    const dx = Math.abs(event.changedTouches[0].clientX - startX);
+    if (startY < 28 && dy > 70 && dx < 70 && unlocked && !activeWindow) openQuick();
+  }, {passive:true});
+
+  // Initialisation : l'écran verrouillé est l'écran de départ.
+  toggles.dark = prefs.dark !== false;
+  applyPreferences();
+  updateClock();
+  setInterval(updateClock, 15000);
+
+  // Une erreur de service worker ne doit pas bloquer le déverrouillage.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
+  }
 })();
 </script>
 </body>
